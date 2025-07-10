@@ -5,7 +5,7 @@ import EditableField from './EditableField';
 import AddSectionItem from './AddSectionItem';
 import ContactInfo from './ContactInfo';
 import { v4 as uuidv4 } from 'uuid';
-import { Experience, Education, Project, ResumeSettings } from '@/types/resume.d';
+import { Experience, Education, Project, ResumeSettings } from '@/types/resume';
 
 interface ModernTemplateProps {
   data: any;
