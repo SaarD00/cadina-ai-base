@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { FileText, ChevronUp, Users, BarChart3, Clock, Briefcase, Home, Cog, User, BookOpen, Layers, LogOut, Plus, Sparkles, Heart, Star, Zap } from 'lucide-react';
+import { FileText, ChevronUp, Users, BarChart3, Clock, Briefcase, Home, Cog, User, BookOpen, Layers, LogOut, Plus, Sparkles, Heart, Star, Zap, Trophy, Medal, Crown, Award } from 'lucide-react';
 import { useToast } from "@/hooks/use-toast";
 import OnboardingFlow from '@/components/OnboardingFlow';
 import { supabase } from '@/integrations/supabase/client';
@@ -32,12 +32,20 @@ interface Resume {
   template: string;
 }
 
-interface JobApplication {
+interface UserRanking {
   id: string;
-  company_name: string;
-  position: string;
-  status: string;
-  applied_date: string;
+  current_rank: number;
+  total_score: number;
+  rank_tier: string;
+  rank_category: string;
+  last_updated: string;
+}
+
+interface TopPlayer {
+  user_id: string;
+  current_rank: number;
+  total_score: number;
+  rank_tier: string;
 }
 
 const Dashboard = () => {
@@ -46,7 +54,8 @@ const Dashboard = () => {
   const [showOnboarding, setShowOnboarding] = useState(false);
   const [showCreateDialog, setShowCreateDialog] = useState(false);
   const [resumes, setResumes] = useState<Resume[]>([]);
-  const [applications, setApplications] = useState<JobApplication[]>([]);
+  const [userRanking, setUserRanking] = useState<UserRanking | null>(null);
+  const [topPlayers, setTopPlayers] = useState<TopPlayer[]>([]);
   const [loadingData, setLoadingData] = useState(true);
   const { toast } = useToast();
 
@@ -69,18 +78,32 @@ const Dashboard = () => {
             setResumes(resumesData || []);
           }
 
-          // Fetch user's job applications
-          const { data: applicationsData, error: applicationsError } = await supabase
-            .from('job_applications')
-            .select('id, company_name, position, status, applied_date')
+          // Fetch user's ranking data
+          const { data: rankingData, error: rankingError } = await supabase
+            .from('user_rankings')
+            .select('id, current_rank, total_score, rank_tier, rank_category, last_updated')
             .eq('user_id', session.user.id)
-            .order('applied_date', { ascending: false })
+            .eq('rank_category', 'overall')
+            .single();
+
+          if (rankingError && rankingError.code !== 'PGRST116') {
+            console.error('Error fetching user ranking:', rankingError);
+          } else {
+            setUserRanking(rankingData);
+          }
+
+          // Fetch top players for leaderboard
+          const { data: topPlayersData, error: topPlayersError } = await supabase
+            .from('user_rankings')
+            .select('user_id, current_rank, total_score, rank_tier')
+            .eq('rank_category', 'overall')
+            .order('current_rank', { ascending: true })
             .limit(5);
 
-          if (applicationsError) {
-            console.error('Error fetching applications:', applicationsError);
+          if (topPlayersError) {
+            console.error('Error fetching top players:', topPlayersError);
           } else {
-            setApplications(applicationsData || []);
+            setTopPlayers(topPlayersData || []);
           }
         }
       } catch (error) {
@@ -122,16 +145,15 @@ const Dashboard = () => {
   }, [toast]);
 
   const calculateStats = () => {
-    const interviewInvites = applications.filter(app =>
-      app.status === 'interview_scheduled' || app.status === 'interview_completed'
-    ).length;
-
-    const totalApplications = applications.length;
+    const currentRank = userRanking?.current_rank || 0;
+    const totalScore = userRanking?.total_score || 0;
+    const rankTier = userRanking?.rank_tier || 'bronze';
 
     return {
       resumesCreated: resumes.length,
-      interviewInvites,
-      totalApplications,
+      currentRank,
+      totalScore,
+      rankTier,
       timeSaved: Math.max(resumes.length * 2, 1) // Assume 2 hours saved per resume
     };
   };
@@ -167,6 +189,26 @@ const Dashboard = () => {
       </CardContent>
     </Card>
   );
+
+  const getTierIcon = (tier: string) => {
+    switch (tier) {
+      case 'diamond': return <Crown className="h-5 w-5" style={{ color: '#7c3bed' }} />;
+      case 'platinum': return <Trophy className="h-5 w-5" style={{ color: '#7c3bed' }} />;
+      case 'gold': return <Medal className="h-5 w-5" style={{ color: '#7c3bed' }} />;
+      case 'silver': return <Award className="h-5 w-5" style={{ color: '#7c3bed' }} />;
+      default: return <Star className="h-5 w-5" style={{ color: '#7c3bed' }} />;
+    }
+  };
+
+  const getTierColor = (tier: string) => {
+    switch (tier) {
+      case 'diamond': return '#9333ea';
+      case 'platinum': return '#374151';
+      case 'gold': return '#f59e0b';
+      case 'silver': return '#6b7280';
+      default: return '#cd7c0f';
+    }
+  };
 
   return (
     <>
@@ -320,28 +362,28 @@ const Dashboard = () => {
 
                   <Card className={`border-0 shadow-lg bg-white text-gray-700 hover:shadow-xl transition-all duration-300 ${isLoaded ? 'animate-fade-in' : 'opacity-0'}`} style={{ animationDelay: '100ms' }}>
                     <CardHeader className="flex flex-row items-center justify-between pb-2">
-                      <CardTitle className="text-sm font-medium text-gray-600">Interview Invites</CardTitle>
-                      <Users className="h-5 w-5" style={{ color: '#7c3bed' }} />
+                      <CardTitle className="text-sm font-medium text-gray-600">Current Rank</CardTitle>
+                      {getTierIcon(stats.rankTier)}
                     </CardHeader>
                     <CardContent>
-                      <div className="text-3xl font-bold text-gray-900">{stats.interviewInvites}</div>
+                      <div className="text-3xl font-bold text-gray-900">#{stats.currentRank || '🔜'}</div>
                       <div className="text-xs text-gray-500 mt-1 flex items-center">
-                        <Heart className="h-3 w-3 mr-1" style={{ color: '#9c87fb' }} />
-                        <span>Companies love you!</span>
+                        <Trophy className="h-3 w-3 mr-1" style={{ color: getTierColor(stats.rankTier) }} />
+                        <span className="capitalize">{stats.rankTier} tier</span>
                       </div>
                     </CardContent>
                   </Card>
 
                   <Card className={`border-0 shadow-lg bg-white text-gray-700 hover:shadow-xl transition-all duration-300 ${isLoaded ? 'animate-fade-in' : 'opacity-0'}`} style={{ animationDelay: '200ms' }}>
                     <CardHeader className="flex flex-row items-center justify-between pb-2">
-                      <CardTitle className="text-sm font-medium text-gray-600">Applications</CardTitle>
+                      <CardTitle className="text-sm font-medium text-gray-600">Total Score</CardTitle>
                       <BarChart3 className="h-5 w-5" style={{ color: '#7c3bed' }} />
                     </CardHeader>
                     <CardContent>
-                      <div className="text-3xl font-bold text-gray-900">{stats.totalApplications}</div>
+                      <div className="text-3xl font-bold text-gray-900">{stats.totalScore?.toLocaleString() || '0'}</div>
                       <div className="text-xs text-gray-500 mt-1 flex items-center">
                         <Zap className="h-3 w-3 mr-1" style={{ color: '#7c3bed' }} />
-                        <span>Keep applying!</span>
+                        <span>Climbing higher!</span>
                       </div>
                     </CardContent>
                   </Card>
@@ -363,24 +405,40 @@ const Dashboard = () => {
 
                 {/* Main Content */}
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                  {/* Recent Activity */}
+                  {/* Ranking Leaderboard */}
                   <Card className={`lg:col-span-1 border-0 shadow-lg bg-white/80 backdrop-blur-sm hover:shadow-xl transition-all duration-300 ${isLoaded ? 'animate-fade-in' : 'opacity-0'}`} style={{ animationDelay: '400ms' }}>
                     <CardHeader>
-                      <CardTitle className="text-[#9c87fb]">Recent Activity</CardTitle>
-                      <CardDescription>Your latest updates and milestones</CardDescription>
+                      <CardTitle className="text-[#9c87fb] flex items-center gap-2">
+                        <Trophy className="h-5 w-5" />
+                        Top Leaderboard
+                      </CardTitle>
+                      <CardDescription>See where you rank among the best</CardDescription>
                     </CardHeader>
                     <CardContent>
-                      {applications.length > 0 ? (
+                      {topPlayers.length > 0 ? (
                         <div className="space-y-4">
-                          {applications.slice(0, 3).map(app => (
-                            <div key={app.id} className="flex items-start border-b border-gray-100 pb-3 last:border-0">
-                              <div className="rounded-full p-2 mr-3" style={{ backgroundColor: '#f4f1f8' }}>
-                                <Briefcase className="h-4 w-4" style={{ color: '#7c3bed' }} />
+                          {topPlayers.slice(0, 5).map((player, index) => (
+                            <div key={player.user_id} className="flex items-center justify-between border-b border-gray-100 pb-3 last:border-0">
+                              <div className="flex items-center gap-3">
+                                <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold ${
+                                  index === 0 ? 'bg-yellow-100 text-yellow-700' :
+                                  index === 1 ? 'bg-gray-100 text-gray-700' :
+                                  index === 2 ? 'bg-orange-100 text-orange-700' :
+                                  'bg-purple-100 text-purple-700'
+                                }`}>
+                                  {index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : `#${index + 1}`}
+                                </div>
+                                <div>
+                                  <div className="font-medium text-gray-800">Player #{player.current_rank}</div>
+                                  <div className="text-xs text-gray-500 flex items-center gap-1">
+                                    {getTierIcon(player.rank_tier)}
+                                    <span className="capitalize">{player.rank_tier}</span>
+                                  </div>
+                                </div>
                               </div>
-                              <div>
-                                <div className="font-medium text-gray-800">{app.position}</div>
-                                <div className="text-sm text-gray-600">{app.company_name}</div>
-                                <div className="text-xs text-gray-500">{formatDate(app.applied_date)}</div>
+                              <div className="text-right">
+                                <div className="font-bold text-gray-900">{player.total_score.toLocaleString()}</div>
+                                <div className="text-xs text-gray-500">points</div>
                               </div>
                             </div>
                           ))}
@@ -388,16 +446,16 @@ const Dashboard = () => {
                       ) : (
                         <div className="text-center py-8">
                           <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4" style={{ backgroundColor: '#9c87fb' }}>
-                            <Sparkles className="h-8 w-8 text-white" />
+                            <Trophy className="h-8 w-8 text-white" />
                           </div>
-                          <p className="text-gray-600 mb-2">No applications yet!</p>
-                          <p className="text-sm text-gray-500">Start applying to see your activity here</p>
+                          <p className="text-gray-600 mb-2">Leaderboard loading...</p>
+                          <p className="text-sm text-gray-500">Rankings will appear here</p>
                         </div>
                       )}
                     </CardContent>
                     <CardFooter>
                       <Button variant="ghost" className="w-full text-[#7c3bed] hover:bg-[#f4f1f8]">
-                        View All Activity
+                        View Full Leaderboard
                       </Button>
                     </CardFooter>
                   </Card>

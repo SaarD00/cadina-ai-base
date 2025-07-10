@@ -190,6 +190,42 @@ export type Database = {
           },
         ]
       }
+      user_rankings: {
+        Row: {
+          created_at: string
+          current_rank: number
+          id: string
+          last_updated: string
+          rank_category: string
+          rank_tier: string
+          total_score: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          current_rank?: number
+          id?: string
+          last_updated?: string
+          rank_category?: string
+          rank_tier?: string
+          total_score?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          current_rank?: number
+          id?: string
+          last_updated?: string
+          rank_category?: string
+          rank_tier?: string
+          total_score?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
