@@ -231,7 +231,18 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      calculate_resume_score: {
+        Args: { resume_content: Json }
+        Returns: number
+      }
+      get_rank_tier: {
+        Args: { score: number }
+        Returns: string
+      }
+      update_user_ranking: {
+        Args: { user_uuid: string }
+        Returns: undefined
+      }
     }
     Enums: {
       [_ in never]: never
