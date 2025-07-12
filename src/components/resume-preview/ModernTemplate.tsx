@@ -229,7 +229,7 @@ const ModernTemplate: React.FC<ModernTemplateProps> = ({
               placeholder="Lead developer for the company's flagship product..."
               className={experienceDescriptionClass}
               onSave={val => handleFieldUpdate("experience", "description", val, exp.id)}
-              onGenerateWithAI={onGenerateWithAI ? () => onGenerateWithAI(`experience-desc`) : undefined}
+              onGenerateWithAI={onGenerateWithAI ? () => onGenerateWithAI(`experience-desc:${exp.id}`) : undefined}
               minRows={1}
               maxRows={3}
             />

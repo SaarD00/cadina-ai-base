@@ -451,7 +451,7 @@ const CustomizableTemplate: React.FC<CustomizableTemplateProps> = ({
               placeholder="Lead developer for the company's flagship product..."
               className="text-sm text-gray-700 mt-1 font-normal leading-relaxed"
               onSave={val => handleFieldUpdate("experience", "description", val, exp.id)}
-              onGenerateWithAI={onGenerateWithAI ? () => onGenerateWithAI(`experience-desc`) : undefined}
+              onGenerateWithAI={onGenerateWithAI ? () => onGenerateWithAI(`experience-desc:${exp.id}`) : undefined}
               minRows={1}
               maxRows={3}
             />

@@ -167,40 +167,46 @@ const ResumeBuilder = () => {
           return "";
         }
         
-        case "experience-desc": {
-          if (Array.isArray(resumeData.experience)) {
-            const currentExp = resumeData.experience.find(exp => exp);
+        default: {
+          // Handle experience-desc with specific ID
+          if (section.startsWith("experience-desc:")) {
+            const experienceId = section.split(":")[1];
+            if (Array.isArray(resumeData.experience)) {
+              const currentExp = resumeData.experience.find(exp => exp.id === experienceId);
 
-            if (currentExp) {
-              const { data, error } = await supabase.functions.invoke('enhance-resume', {
-                body: {
-                  type: 'experience-description',
-                  experienceContext: {
-                    title: currentExp.title,
-                    company: currentExp.company,
-                    location: currentExp.location,
-                    startDate: currentExp.startDate,
-                    endDate: currentExp.endDate,
-                    description: currentExp.description
+              if (currentExp) {
+                const { data, error } = await supabase.functions.invoke('enhance-resume', {
+                  body: {
+                    type: 'experience-description',
+                    experienceContext: {
+                      title: currentExp.title,
+                      company: currentExp.company,
+                      location: currentExp.location,
+                      startDate: currentExp.startDate,
+                      endDate: currentExp.endDate,
+                      description: currentExp.description
+                    }
                   }
-                }
-              });
+                });
 
-              if (error) throw error;
-              if (data?.description) {
-                // Find the current experience in the array and update its description
-                const updatedExperience = [...resumeData.experience];
-                const expIndex = updatedExperience.findIndex(exp => exp.id === currentExp.id);
-                
-                if (expIndex !== -1) {
-                  updatedExperience[expIndex] = {
-                    ...updatedExperience[expIndex],
-                    description: data.description
-                  };
-                  handleDataChange("experience", updatedExperience);
+                if (error) throw error;
+                if (data?.description) {
+                  // Find the current experience in the array and update its description
+                  const updatedExperience = [...resumeData.experience];
+                  const expIndex = updatedExperience.findIndex(exp => exp.id === experienceId);
+                  
+                  if (expIndex !== -1) {
+                    updatedExperience[expIndex] = {
+                      ...updatedExperience[expIndex],
+                      description: data.description
+                    };
+                    handleDataChange("experience", updatedExperience);
+                    return data.description;
+                  }
                 }
               }
             }
+            return "";
           }
           return "";
         }
@@ -242,9 +248,6 @@ const ResumeBuilder = () => {
           }
           return "";
         }
-        
-        default:
-          return "";
       }
     } catch (error) {
       console.error('Error generating with Cadina AI:', error);
