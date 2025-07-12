@@ -199,43 +199,53 @@ export default function CreateResumeDialog({
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
-      <DialogContent className="sm:max-w-[600px] p-0 overflow-hidden">
-        <div className="bg-gradient-to-br from-purple-50 to-blue-50 p-6">
-          <DialogHeader>
-            <DialogTitle className="text-2xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent flex items-center gap-2">
-              <Sparkles className="h-6 w-6 text-purple-600" />
+      <DialogContent className="sm:max-w-[650px] p-0 overflow-hidden bg-background border-none shadow-2xl">
+        {/* Header with gradient background */}
+        <div className="relative bg-gradient-to-br from-primary/10 via-primary/5 to-accent/10 p-8 border-b border-border/50">
+          <div className="absolute inset-0 bg-grid-pattern opacity-20"></div>
+          <DialogHeader className="relative">
+            <DialogTitle className="text-3xl font-bold text-foreground flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-primary/20 flex items-center justify-center">
+                <Sparkles className="h-5 w-5 text-primary" />
+              </div>
               Create AI-Enhanced Resume
             </DialogTitle>
-            <DialogDescription className="text-gray-600 mt-2">
-              Transform your LinkedIn profile into a professional, ATS-optimized resume using AI
+            <DialogDescription className="text-muted-foreground text-base mt-3 leading-relaxed">
+              Transform your LinkedIn profile into a professional, ATS-optimized resume using advanced AI technology
             </DialogDescription>
           </DialogHeader>
         </div>
 
-        <div className="p-6 space-y-6">
+        <div className="p-8 space-y-8">
           {!isCreating ? (
-            <form onSubmit={handleCreate} className="space-y-6">
-              <div className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="name" className="text-sm font-semibold flex items-center gap-2">
-                    <FileText className="h-4 w-4" />
+            <form onSubmit={handleCreate} className="space-y-8">
+              <div className="space-y-6">
+                {/* Resume Name Input */}
+                <div className="space-y-3">
+                  <Label htmlFor="name" className="text-sm font-semibold text-foreground flex items-center gap-2">
+                    <div className="w-5 h-5 rounded-md bg-primary/10 flex items-center justify-center">
+                      <FileText className="h-3 w-3 text-primary" />
+                    </div>
                     Resume Name
                   </Label>
                   <Input
                     id="name"
-                    placeholder="e.g., Software Engineer Resume"
+                    placeholder="e.g., Senior Software Engineer Resume"
                     value={resumeName}
                     onChange={(e) => setResumeName(e.target.value)}
-                    className="border-gray-300 focus:border-purple-500 focus:ring-purple-500"
+                    className="h-12 bg-background border-border focus:border-primary transition-all duration-200 text-base"
                   />
-                  <p className="text-xs text-gray-500">
+                  <p className="text-xs text-muted-foreground leading-relaxed">
                     Give your resume a descriptive name for easy identification
                   </p>
                 </div>
                 
-                <div className="space-y-2">
-                  <Label htmlFor="linkedin" className="text-sm font-semibold flex items-center gap-2">
-                    <Linkedin className="h-4 w-4 text-[#0A66C2]" />
+                {/* LinkedIn URL Input */}
+                <div className="space-y-3">
+                  <Label htmlFor="linkedin" className="text-sm font-semibold text-foreground flex items-center gap-2">
+                    <div className="w-5 h-5 rounded-md bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center">
+                      <Linkedin className="h-3 w-3 text-blue-600 dark:text-blue-400" />
+                    </div>
                     LinkedIn Profile URL
                   </Label>
                   <Input
@@ -243,74 +253,84 @@ export default function CreateResumeDialog({
                     placeholder="https://linkedin.com/in/yourname"
                     value={linkedinUrl}
                     onChange={(e) => setLinkedinUrl(e.target.value)}
-                    className="border-gray-300 focus:border-purple-500 focus:ring-purple-500"
+                    className="h-12 bg-background border-border focus:border-primary transition-all duration-200 text-base"
                     required
                   />
-                  <p className="text-xs text-gray-500">
-                    Make sure your LinkedIn profile is public or accessible
+                  <p className="text-xs text-muted-foreground leading-relaxed">
+                    Ensure your LinkedIn profile is public or accessible for the best results
                   </p>
                 </div>
               </div>
 
+              {/* Error Display */}
               {error && (
-                <div className="bg-red-50 border border-red-200 rounded-lg p-3 flex items-start gap-2">
-                  <AlertCircle className="h-4 w-4 text-red-500 mt-0.5 flex-shrink-0" />
-                  <div className="text-red-700 text-sm">{error}</div>
+                <div className="bg-destructive/10 border border-destructive/20 rounded-xl p-4 flex items-start gap-3 animate-slide-up">
+                  <div className="w-5 h-5 rounded-full bg-destructive/20 flex items-center justify-center mt-0.5 flex-shrink-0">
+                    <AlertCircle className="h-3 w-3 text-destructive" />
+                  </div>
+                  <div className="text-destructive text-sm leading-relaxed">{error}</div>
                 </div>
               )}
 
-              <Card className="border-purple-200 bg-purple-50/50">
-                <div className="p-4">
-                  <h4 className="font-semibold text-purple-900 mb-3 flex items-center gap-2">
-                    <Sparkles className="h-4 w-4" />
+              {/* Feature Preview Card */}
+              <Card className="border-primary/20 bg-gradient-to-br from-primary/5 to-accent/5">
+                <div className="p-6">
+                  <h4 className="font-semibold text-foreground mb-4 flex items-center gap-2">
+                    <div className="w-6 h-6 rounded-lg bg-primary/20 flex items-center justify-center">
+                      <Sparkles className="h-3.5 w-3.5 text-primary" />
+                    </div>
                     What happens next?
                   </h4>
-                  <div className="space-y-2 text-sm text-purple-800">
-                    <div className="flex items-center gap-2">
-                      <div className="w-1.5 h-1.5 bg-purple-500 rounded-full"></div>
-                      <span>Extract your professional experience and skills</span>
+                  <div className="grid grid-cols-2 gap-4 text-sm">
+                    <div className="flex items-start gap-3">
+                      <div className="w-2 h-2 bg-primary rounded-full mt-2 flex-shrink-0"></div>
+                      <span className="text-muted-foreground leading-relaxed">Extract professional experience and skills</span>
                     </div>
-                    <div className="flex items-center gap-2">
-                      <div className="w-1.5 h-1.5 bg-purple-500 rounded-full"></div>
-                      <span>Enhance descriptions with AI for better impact</span>
+                    <div className="flex items-start gap-3">
+                      <div className="w-2 h-2 bg-primary rounded-full mt-2 flex-shrink-0"></div>
+                      <span className="text-muted-foreground leading-relaxed">Enhance descriptions with AI impact</span>
                     </div>
-                    <div className="flex items-center gap-2">
-                      <div className="w-1.5 h-1.5 bg-purple-500 rounded-full"></div>
-                      <span>Generate ATS-friendly formatting</span>
+                    <div className="flex items-start gap-3">
+                      <div className="w-2 h-2 bg-primary rounded-full mt-2 flex-shrink-0"></div>
+                      <span className="text-muted-foreground leading-relaxed">Generate ATS-friendly formatting</span>
                     </div>
-                    <div className="flex items-center gap-2">
-                      <div className="w-1.5 h-1.5 bg-purple-500 rounded-full"></div>
-                      <span>Create multiple template options</span>
+                    <div className="flex items-start gap-3">
+                      <div className="w-2 h-2 bg-primary rounded-full mt-2 flex-shrink-0"></div>
+                      <span className="text-muted-foreground leading-relaxed">Create multiple template options</span>
                     </div>
                   </div>
                 </div>
               </Card>
 
+              {/* CTA Button */}
               <DialogFooter>
                 <Button 
                   type="submit" 
                   disabled={isCreating}
-                  className="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white font-semibold py-3 transition-all duration-200"
+                  className="w-full h-14 bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 text-primary-foreground font-semibold text-base rounded-xl transition-all duration-300 shadow-lg hover:shadow-primary/25 group"
                 >
-                  <span className="flex items-center gap-2">
-                    <Sparkles className="h-4 w-4" />
+                  <div className="flex items-center gap-3">
+                    <div className="w-5 h-5 rounded-md bg-primary-foreground/20 flex items-center justify-center">
+                      <Sparkles className="h-3 w-3" />
+                    </div>
                     Create AI Resume
-                    <ArrowRight className="h-4 w-4" />
-                  </span>
+                    <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
+                  </div>
                 </Button>
               </DialogFooter>
             </form>
           ) : (
-            <div className="py-8">
-              <div className="text-center mb-8">
-                <div className="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Sparkles className="h-8 w-8 text-purple-600 animate-pulse" />
+            /* Processing State */
+            <div className="py-12">
+              <div className="text-center mb-12">
+                <div className="w-20 h-20 bg-primary/10 rounded-2xl flex items-center justify-center mx-auto mb-6 animate-float">
+                  <Sparkles className="h-10 w-10 text-primary animate-pulse" />
                 </div>
-                <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                <h3 className="text-2xl font-semibold text-foreground mb-3">
                   Creating Your Resume
                 </h3>
-                <p className="text-gray-600">
-                  Please wait while we process your LinkedIn profile
+                <p className="text-muted-foreground text-base">
+                  Please wait while we process your LinkedIn profile with AI
                 </p>
               </div>
 
@@ -318,30 +338,41 @@ export default function CreateResumeDialog({
                 {steps.map((step, index) => (
                   <div 
                     key={step.id}
-                    className={`flex items-center gap-4 p-4 rounded-lg border transition-all duration-300 ${
+                    className={`flex items-center gap-4 p-5 rounded-xl border transition-all duration-500 ${
                       step.status === 'completed' 
-                        ? 'bg-green-50 border-green-200' 
+                        ? 'bg-green-50 dark:bg-green-950/20 border-green-200 dark:border-green-800/30' 
                         : step.status === 'processing'
-                        ? 'bg-blue-50 border-blue-200'
+                        ? 'bg-primary/5 border-primary/20 shadow-sm'
                         : step.status === 'error'
-                        ? 'bg-red-50 border-red-200'
-                        : 'bg-gray-50 border-gray-200'
+                        ? 'bg-destructive/5 border-destructive/20'
+                        : 'bg-muted/30 border-border'
                     }`}
+                    style={{ animationDelay: `${index * 100}ms` }}
                   >
                     <div className="flex-shrink-0">
-                      {getStepIcon(step)}
+                      <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${
+                        step.status === 'completed'
+                          ? 'bg-green-100 dark:bg-green-900/30'
+                          : step.status === 'processing'
+                          ? 'bg-primary/10'
+                          : step.status === 'error'
+                          ? 'bg-destructive/10'
+                          : 'bg-muted'
+                      }`}>
+                        {getStepIcon(step)}
+                      </div>
                     </div>
-                    <div className="flex-grow">
-                      <div className="font-medium text-gray-900">{step.title}</div>
-                      <div className="text-sm text-gray-600">{step.description}</div>
+                    <div className="flex-grow min-w-0">
+                      <div className="font-semibold text-foreground text-base mb-1">{step.title}</div>
+                      <div className="text-sm text-muted-foreground leading-relaxed">{step.description}</div>
                     </div>
                     {step.status === 'completed' && (
-                      <Badge variant="secondary" className="bg-green-100 text-green-800">
+                      <Badge variant="secondary" className="bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300 border-green-200 dark:border-green-800">
                         Done
                       </Badge>
                     )}
                     {step.status === 'processing' && (
-                      <Badge variant="secondary" className="bg-blue-100 text-blue-800">
+                      <Badge variant="secondary" className="bg-primary/10 text-primary border-primary/20">
                         Processing
                       </Badge>
                     )}
