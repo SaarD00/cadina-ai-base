@@ -1,152 +1,233 @@
-import React, { useState, useEffect } from 'react';
-import { Button } from '@/components/ui/button';
-import { FileText, Menu } from 'lucide-react';
+
+import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { supabase } from '@/integrations/supabase/client';
-import Image from './ui/image';
+import { Button } from '@/components/ui/button';
+import { 
+  Menu, 
+  X, 
+  FileText, 
+  User, 
+  LogOut,
+  BookOpen
+} from 'lucide-react';
+import { useUser, useClerk } from '@clerk/clerk-react';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 
-const Navbar = () => {
-  const [scrolled, setScrolled] = useState(false);
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [isSignedIn, setIsSignedIn] = useState(false);
+export const Navbar = () => {
+  const [isOpen, setIsOpen] = useState(false);
+  const { user, isSignedIn } = useUser();
+  const { signOut } = useClerk();
   const location = useLocation();
-  const isOnDashboard = location.pathname === '/dashboard';
 
-  // Check auth state
-  useEffect(() => {
-    const { data: authListener } = supabase.auth.onAuthStateChange((event, session) => {
-      setIsSignedIn(!!session);
-    });
-
-    // Initial check
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setIsSignedIn(!!session);
-    });
-
-    return () => {
-      authListener?.subscription.unsubscribe();
-    };
-  }, []);
-
-  useEffect(() => {
-    const handleScroll = () => {
-      const offset = window.scrollY;
-      if (offset > 50) {
-        setScrolled(true);
-      } else {
-        setScrolled(false);
-      }
-    };
-
-    window.addEventListener('scroll', handleScroll);
-
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-    };
-  }, []);
-
-  const handleSignOut = async () => {
-    await supabase.auth.signOut();
+  const handleSignOut = () => {
+    signOut();
   };
 
-  if (isOnDashboard) {
-    return null; // Don't show navbar on dashboard as we have sidebar
-  }
+  const navigation = [
+    { name: 'Templates', href: '/templates' },
+    { name: 'Blog', href: '/blog' },
+    { name: 'Pricing', href: '#pricing' },
+  ];
+
+  const isActive = (path: string) => {
+    return location.pathname === path;
+  };
 
   return (
-    <nav className={`py-4 border-b sticky top-0 z-50 animate-fade-in transition-all duration-300 ${scrolled ? 'backdrop-blur-md bg-white/90 shadow-sm' : 'backdrop-blur-md bg-white/80'}`}>
-      <div className="container flex items-center justify-between">
-        <div className="flex items-center gap-2 animate-slide-in-left">
-          <div className={`bg-resume-purple rounded-full p-0.5  transition-transform duration-300 ${scrolled ? 'scale-75' : ''}`}>
-            {/* <FileText className={`h-5 w-5 text-white transition-all duration-300 ${scrolled ? 'scale-110' : ''}`} /> */}
-            <Image src="logo.png " className={`h-11 w-11 text-white transition-all duration-300 ${scrolled ? 'scale-125' : ''}`} />
-          </div>
-          <Link to="/" className="font-bold text-xl bg-gradient-to-r from-resume-purple to-resume-violet bg-clip-text text-transparent">Vireia AI</Link>
-        </div>
-        <div className="hidden md:flex space-x-8 animate-slide-in-right animate-delay-200">
-          <a href="#features" className="text-resume-gray hover:text-resume-purple transition-colors font-medium">Features</a>
-          <a href="#how-it-works" className="text-resume-gray hover:text-resume-purple transition-colors font-medium">How It Works</a>
-          <a href="#pricing" className="text-resume-gray hover:text-resume-purple transition-colors font-medium">Pricing</a>
-          {isSignedIn && (
-            <Link to="/dashboard" className="text-resume-gray hover:text-resume-purple transition-colors font-medium">Dashboard</Link>
-          )}
-        </div>
-        <div className="flex space-x-3 animate-slide-in-right">
-          {isSignedIn ? (
-            <div className="flex gap-2">
-              <Link to="/dashboard">
-                <Button variant="ghost" className="hover:bg-resume-purple/10 text-resume-gray hover:text-resume-purple">
-                  Dashboard
-                </Button>
-              </Link>
-              <Button
-                variant="outline"
-                className="text-resume-gray"
-                onClick={handleSignOut}
-              >
-                Sign Out
-              </Button>
+    <nav className="sticky top-0 z-50 bg-background/80 backdrop-blur-md border-b border-border/40">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex justify-between items-center h-16">
+          {/* Logo */}
+          <Link to="/" className="flex items-center space-x-2">
+            <div className="w-8 h-8 bg-gradient-to-br from-primary to-primary/70 rounded-lg flex items-center justify-center">
+              <FileText className="h-5 w-5 text-white" />
             </div>
-          ) : (
-            <>
-              <Link to="/sign-in">
-                <Button variant="ghost" className="hidden md:inline-flex hover:bg-resume-purple/10 text-resume-gray hover:text-resume-purple">
-                  Sign In
-                </Button>
-              </Link>
-              <Link to="/sign-up">
-                <Button className={`bg-resume-purple hover:bg-resume-purple-dark shadow-lg shadow-resume-purple/20 transition-all duration-300 hover:shadow-xl hover:shadow-resume-purple/30 ${scrolled ? 'px-5' : ''}`}>
-                  {scrolled ? 'Try Free' : 'Get Started'}
-                </Button>
-              </Link>
-            </>
-          )}
-          <Button
-            variant="ghost"
-            size="icon"
-            className="md:hidden text-resume-gray"
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-          >
-            <Menu className="h-5 w-5" />
-          </Button>
-        </div>
-      </div>
+            <span className="font-bold text-xl bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
+              Vireia AI
+            </span>
+          </Link>
 
-      {/* Mobile Menu */}
-      {mobileMenuOpen && (
-        <div className="md:hidden absolute top-full left-0 right-0 bg-white border-b shadow-md animate-fade-in">
-          <div className="container py-4 flex flex-col space-y-3">
-            <a href="#features" className="text-resume-gray hover:text-resume-purple transition-colors font-medium py-2">Features</a>
-            <a href="#how-it-works" className="text-resume-gray hover:text-resume-purple transition-colors font-medium py-2">How It Works</a>
-            <a href="#pricing" className="text-resume-gray hover:text-resume-purple transition-colors font-medium py-2">Pricing</a>
-            {isSignedIn && (
-              <Link to="/dashboard" className="text-resume-gray hover:text-resume-purple transition-colors font-medium py-2">Dashboard</Link>
-            )}
-            {!isSignedIn && (
-              <div className="pt-2 flex">
-                <Link to="/sign-up" className="w-full">
-                  <Button className="w-full bg-resume-purple hover:bg-resume-purple-dark shadow-lg shadow-resume-purple/20">
-                    Get Started
+          {/* Desktop Navigation */}
+          <div className="hidden md:flex items-center space-x-8">
+            {navigation.map((item) => (
+              <Link
+                key={item.name}
+                to={item.href}
+                className={`text-sm font-medium transition-colors hover:text-primary ${
+                  isActive(item.href) 
+                    ? 'text-primary' 
+                    : 'text-muted-foreground'
+                }`}
+              >
+                {item.name}
+              </Link>
+            ))}
+          </div>
+
+          {/* Auth Section */}
+          <div className="hidden md:flex items-center space-x-4">
+            {isSignedIn ? (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" className="relative h-10 w-10 rounded-full">
+                    <Avatar className="h-10 w-10">
+                      <AvatarImage src={user?.imageUrl} alt={user?.fullName || ''} />
+                      <AvatarFallback>
+                        {user?.fullName?.charAt(0) || user?.emailAddresses[0]?.emailAddress?.charAt(0) || 'U'}
+                      </AvatarFallback>
+                    </Avatar>
                   </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="w-56" align="end" forceMount>
+                  <div className="flex items-center justify-start gap-2 p-2">
+                    <div className="flex flex-col space-y-1 leading-none">
+                      {user?.fullName && (
+                        <p className="font-medium">{user.fullName}</p>
+                      )}
+                      {user?.emailAddresses[0]?.emailAddress && (
+                        <p className="w-[200px] truncate text-sm text-muted-foreground">
+                          {user.emailAddresses[0].emailAddress}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem asChild>
+                    <Link to="/dashboard" className="flex items-center">
+                      <User className="mr-2 h-4 w-4" />
+                      Dashboard
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link to="/resume" className="flex items-center">
+                      <FileText className="mr-2 h-4 w-4" />
+                      My Resumes
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={handleSignOut}>
+                    <LogOut className="mr-2 h-4 w-4" />
+                    Sign out
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            ) : (
+              <div className="flex items-center space-x-4">
+                <Link to="/sign-in">
+                  <Button variant="ghost">Sign In</Button>
+                </Link>
+                <Link to="/sign-up">
+                  <Button>Get Started</Button>
                 </Link>
               </div>
             )}
-            {isSignedIn && (
-              <div className="pt-2 flex">
-                <Button
-                  className="w-full text-resume-gray"
-                  variant="outline"
-                  onClick={handleSignOut}
-                >
-                  Sign Out
-                </Button>
-              </div>
-            )}
+          </div>
+
+          {/* Mobile menu button */}
+          <div className="md:hidden">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setIsOpen(!isOpen)}
+            >
+              {isOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+            </Button>
           </div>
         </div>
-      )}
+
+        {/* Mobile Navigation */}
+        {isOpen && (
+          <div className="md:hidden">
+            <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+              {navigation.map((item) => (
+                <Link
+                  key={item.name}
+                  to={item.href}
+                  className={`block px-3 py-2 text-base font-medium rounded-md transition-colors ${
+                    isActive(item.href)
+                      ? 'text-primary bg-primary/10'
+                      : 'text-muted-foreground hover:text-primary hover:bg-accent'
+                  }`}
+                  onClick={() => setIsOpen(false)}
+                >
+                  {item.name}
+                </Link>
+              ))}
+              
+              {!isSignedIn && (
+                <div className="pt-4 pb-3 border-t border-border">
+                  <div className="flex flex-col space-y-2">
+                    <Link to="/sign-in" onClick={() => setIsOpen(false)}>
+                      <Button variant="ghost" className="w-full justify-start">
+                        Sign In
+                      </Button>
+                    </Link>
+                    <Link to="/sign-up" onClick={() => setIsOpen(false)}>
+                      <Button className="w-full">Get Started</Button>
+                    </Link>
+                  </div>
+                </div>
+              )}
+              
+              {isSignedIn && (
+                <div className="pt-4 pb-3 border-t border-border">
+                  <div className="flex items-center px-3 mb-3">
+                    <Avatar className="h-10 w-10">
+                      <AvatarImage src={user?.imageUrl} alt={user?.fullName || ''} />
+                      <AvatarFallback>
+                        {user?.fullName?.charAt(0) || user?.emailAddresses[0]?.emailAddress?.charAt(0) || 'U'}
+                      </AvatarFallback>
+                    </Avatar>
+                    <div className="ml-3">
+                      <div className="text-base font-medium">
+                        {user?.fullName || 'User'}
+                      </div>
+                      <div className="text-sm text-muted-foreground truncate">
+                        {user?.emailAddresses[0]?.emailAddress}
+                      </div>
+                    </div>
+                  </div>
+                  <div className="space-y-1">
+                    <Link
+                      to="/dashboard"
+                      className="flex items-center px-3 py-2 text-base font-medium text-muted-foreground hover:text-primary hover:bg-accent rounded-md"
+                      onClick={() => setIsOpen(false)}
+                    >
+                      <User className="mr-3 h-5 w-5" />
+                      Dashboard
+                    </Link>
+                    <Link
+                      to="/resume"
+                      className="flex items-center px-3 py-2 text-base font-medium text-muted-foreground hover:text-primary hover:bg-accent rounded-md"
+                      onClick={() => setIsOpen(false)}
+                    >
+                      <FileText className="mr-3 h-5 w-5" />
+                      My Resumes
+                    </Link>
+                    <button
+                      onClick={() => {
+                        handleSignOut();
+                        setIsOpen(false);
+                      }}
+                      className="flex items-center w-full px-3 py-2 text-base font-medium text-muted-foreground hover:text-primary hover:bg-accent rounded-md"
+                    >
+                      <LogOut className="mr-3 h-5 w-5" />
+                      Sign out
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+      </div>
     </nav>
   );
 };
-
-export default Navbar;

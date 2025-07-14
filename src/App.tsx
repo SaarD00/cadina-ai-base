@@ -13,6 +13,7 @@ import ResumeCanvas from "./pages/ResumeCanvas";
 import Applications from "./pages/Applications";
 import Analytics from "./pages/Analytics";
 import Templates from "./pages/Templates";
+import Blog from "./pages/Blog";
 import NotFound from "./pages/NotFound";
 import SignIn from "./pages/SignIn";
 import SignUp from "./pages/SignUp";
@@ -32,6 +33,7 @@ const App = () => (
             <Route path="/sign-in/*" element={<SignIn />} />
             <Route path="/sign-up/*" element={<SignUp />} />
             <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+            <Route path="/blog" element={<Blog />} />
             
             {/* Protected routes */}
             <Route path="/dashboard" element={<Dashboard />} />
