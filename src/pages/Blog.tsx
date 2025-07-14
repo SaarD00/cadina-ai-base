@@ -3,11 +3,10 @@ import React from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Navbar } from '@/components/Navbar';
-import { Footer } from '@/components/Footer';
+import Footer from '@/components/Footer';
 import { BlogHero } from '@/components/blog/BlogHero';
 import { BlogGrid } from '@/components/blog/BlogGrid';
 import { BlogSidebar } from '@/components/blog/BlogSidebar';
-import { LoadingSkeleton } from '@/components/resume-preview/LoadingSkeleton';
 import { AlertCircle } from 'lucide-react';
 
 const Blog = () => {
@@ -53,10 +52,17 @@ const Blog = () => {
           {isLoading ? (
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
               <div className="lg:col-span-2">
-                <LoadingSkeleton />
+                <div className="animate-pulse space-y-6">
+                  <div className="h-64 bg-muted rounded-lg"></div>
+                  <div className="h-48 bg-muted rounded-lg"></div>
+                  <div className="h-48 bg-muted rounded-lg"></div>
+                </div>
               </div>
               <div className="lg:col-span-1">
-                <LoadingSkeleton />
+                <div className="animate-pulse space-y-4">
+                  <div className="h-32 bg-muted rounded-lg"></div>
+                  <div className="h-48 bg-muted rounded-lg"></div>
+                </div>
               </div>
             </div>
           ) : error ? (

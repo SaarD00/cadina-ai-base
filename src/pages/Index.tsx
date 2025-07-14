@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Button } from '@/components/ui/button';
-import Navbar from '@/components/Navbar';
+import { Navbar } from '@/components/Navbar';
 import HeroSection from '@/components/HeroSection';
 import InfrastructureSection from '@/components/InfrastructureSection';
 import PricingSection from '@/components/PricingSection';
