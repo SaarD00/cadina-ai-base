@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { 
@@ -10,7 +10,7 @@ import {
   LogOut,
   BookOpen
 } from 'lucide-react';
-import { useUser, useClerk } from '@clerk/clerk-react';
+import { supabase } from '@/integrations/supabase/client';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -19,15 +19,31 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import type { User as SupabaseUser } from '@supabase/supabase-js';
 
 export const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const { user, isSignedIn } = useUser();
-  const { signOut } = useClerk();
+  const [user, setUser] = useState<SupabaseUser | null>(null);
   const location = useLocation();
 
-  const handleSignOut = () => {
-    signOut();
+  useEffect(() => {
+    // Get initial session
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setUser(session?.user ?? null);
+    });
+
+    // Listen for auth changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      (event, session) => {
+        setUser(session?.user ?? null);
+      }
+    );
+
+    return () => subscription.unsubscribe();
+  }, []);
+
+  const handleSignOut = async () => {
+    await supabase.auth.signOut();
   };
 
   const navigation = [
@@ -73,14 +89,14 @@ export const Navbar = () => {
 
           {/* Auth Section */}
           <div className="hidden md:flex items-center space-x-4">
-            {isSignedIn ? (
+            {user ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button variant="ghost" className="relative h-10 w-10 rounded-full">
                     <Avatar className="h-10 w-10">
-                      <AvatarImage src={user?.imageUrl} alt={user?.fullName || ''} />
+                      <AvatarImage src={user?.user_metadata?.avatar_url} alt={user?.user_metadata?.full_name || ''} />
                       <AvatarFallback>
-                        {user?.fullName?.charAt(0) || user?.emailAddresses[0]?.emailAddress?.charAt(0) || 'U'}
+                        {user?.user_metadata?.full_name?.charAt(0) || user?.email?.charAt(0) || 'U'}
                       </AvatarFallback>
                     </Avatar>
                   </Button>
@@ -88,12 +104,12 @@ export const Navbar = () => {
                 <DropdownMenuContent className="w-56" align="end" forceMount>
                   <div className="flex items-center justify-start gap-2 p-2">
                     <div className="flex flex-col space-y-1 leading-none">
-                      {user?.fullName && (
-                        <p className="font-medium">{user.fullName}</p>
+                      {user?.user_metadata?.full_name && (
+                        <p className="font-medium">{user.user_metadata.full_name}</p>
                       )}
-                      {user?.emailAddresses[0]?.emailAddress && (
+                      {user?.email && (
                         <p className="w-[200px] truncate text-sm text-muted-foreground">
-                          {user.emailAddresses[0].emailAddress}
+                          {user.email}
                         </p>
                       )}
                     </div>
@@ -161,7 +177,7 @@ export const Navbar = () => {
                 </Link>
               ))}
               
-              {!isSignedIn && (
+              {!user && (
                 <div className="pt-4 pb-3 border-t border-border">
                   <div className="flex flex-col space-y-2">
                     <Link to="/sign-in" onClick={() => setIsOpen(false)}>
@@ -176,21 +192,21 @@ export const Navbar = () => {
                 </div>
               )}
               
-              {isSignedIn && (
+              {user && (
                 <div className="pt-4 pb-3 border-t border-border">
                   <div className="flex items-center px-3 mb-3">
                     <Avatar className="h-10 w-10">
-                      <AvatarImage src={user?.imageUrl} alt={user?.fullName || ''} />
+                      <AvatarImage src={user?.user_metadata?.avatar_url} alt={user?.user_metadata?.full_name || ''} />
                       <AvatarFallback>
-                        {user?.fullName?.charAt(0) || user?.emailAddresses[0]?.emailAddress?.charAt(0) || 'U'}
+                        {user?.user_metadata?.full_name?.charAt(0) || user?.email?.charAt(0) || 'U'}
                       </AvatarFallback>
                     </Avatar>
                     <div className="ml-3">
                       <div className="text-base font-medium">
-                        {user?.fullName || 'User'}
+                        {user?.user_metadata?.full_name || 'User'}
                       </div>
                       <div className="text-sm text-muted-foreground truncate">
-                        {user?.emailAddresses[0]?.emailAddress}
+                        {user?.email}
                       </div>
                     </div>
                   </div>
