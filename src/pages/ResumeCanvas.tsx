@@ -57,6 +57,7 @@ import { ResumeData, Project } from '@/types/resume';
 import { Badge } from "@/components/ui/badge";
 import AIAssistant from '@/components/resume-builder/AIAssistant';
 import AIAnalysisDrawer from '@/components/resume-builder/AIAnalysisDrawer';
+import ResumeCanvasStyleTab from '@/components/resume-canvas/ResumeCanvasStyleTab';
 
 const CANVAS_PADDING = 40;
 const DEFAULT_ZOOM = 100;
@@ -469,70 +470,91 @@ const ResumeCanvas = () => {
       <div className="flex flex-1 overflow-hidden">
         {/* Left Sidebar - Toggleable */}
         {showSidebar && (
-          <div className="w-72 border-r border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 overflow-y-auto transition-all duration-200 ease-in-out shadow-md">
-            <Tabs defaultValue="content" className="w-full">
-              <TabsList className="w-full grid grid-cols-2 p-1 m-2 bg-gray-100 dark:bg-gray-700 rounded-md">
-                <TabsTrigger
-                  value="content"
-                  className="data-[state=active]:bg-white dark:data-[state=active]:bg-gray-800 data-[state=active]:text-resume-purple dark:data-[state=active]:text-resume-purple-light data-[state=active]:shadow-sm"
-                >
-                  Content
-                </TabsTrigger>
-                <TabsTrigger
-                  value="style"
-                  className="data-[state=active]:bg-white dark:data-[state=active]:bg-gray-800 data-[state=active]:text-resume-purple dark:data-[state=active]:text-resume-purple-light data-[state=active]:shadow-sm"
-                >
-                  Style
-                </TabsTrigger>
-              </TabsList>
+          <div className="w-80 border-r border-border bg-background overflow-y-auto transition-all duration-300 ease-in-out shadow-lg backdrop-blur-sm border-r-2">
+            <Tabs defaultValue="content" className="w-full h-full">
+              <div className="sticky top-0 z-10 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b border-border">
+                <TabsList className="w-full grid grid-cols-2 p-2 m-3 bg-muted rounded-lg shadow-sm">
+                  <TabsTrigger
+                    value="content"
+                    className="data-[state=active]:bg-background data-[state=active]:text-primary data-[state=active]:shadow-sm transition-all duration-200 rounded-md font-medium"
+                  >
+                    <FileText className="w-4 h-4 mr-2" />
+                    Content
+                  </TabsTrigger>
+                  <TabsTrigger
+                    value="style"
+                    className="data-[state=active]:bg-background data-[state=active]:text-primary data-[state=active]:shadow-sm transition-all duration-200 rounded-md font-medium"
+                  >
+                    <SettingsIcon className="w-4 h-4 mr-2" />
+                    Style
+                  </TabsTrigger>
+                </TabsList>
+              </div>
 
-              <TabsContent value="content" className="p-3 space-y-4">
-                <div className="space-y-2">
-                  <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300">Sections</h3>
-                  {Object.entries({
-                    personal: "Personal Info",
-                    summary: "Summary",
-                    experience: "Experience",
-                    education: "Education",
-                    skills: "Skills",
-                    projects: "Projects"
-                  }).map(([key, label]) => (
-                    <div
-                      key={key}
-                      className={`flex items-center justify-between p-2 rounded-md cursor-pointer transition-colors ${activeSection === key ? 'bg-purple-100 dark:bg-purple-900/40 text-resume-purple dark:text-resume-purple-light' : 'hover:bg-gray-100 dark:hover:bg-gray-700'}`}
-                      onClick={() => setActiveSection(key)}
-                    >
-                      <span className="text-sm">{label}</span>
-                      {key === 'summary' && (
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          className="h-7 px-2 text-xs hover:bg-purple-200 dark:hover:bg-purple-800"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleFieldEdit('summary', undefined, undefined, resumeData.summary);
-                          }}
-                        >
-                          <Edit className="h-3 w-3 mr-1" />
-                          Edit
-                        </Button>
-                      )}
-                      {['experience', 'education', 'projects'].includes(key) && (
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          className="h-7 px-2 text-xs hover:bg-purple-200 dark:hover:bg-purple-800"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleAddItem(key);
-                          }}
-                        >
-                          <Plus className="h-3 w-3 mr-1" />
-                          Add
-                        </Button>
-                      )}
-                    </div>
-                  ))}
+              <TabsContent value="content" className="p-4 space-y-6 animate-fade-in">
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <h3 className="text-lg font-semibold text-foreground">Resume Sections</h3>
+                    <Badge variant="outline" className="text-xs">
+                      {calculateProgress(resumeData)}% Complete
+                    </Badge>
+                  </div>
+                  <div className="grid gap-2">
+                    {Object.entries({
+                      personal: "Personal Info",
+                      summary: "Summary", 
+                      experience: "Experience",
+                      education: "Education",
+                      skills: "Skills",
+                      projects: "Projects"
+                    }).map(([key, label]) => (
+                      <Card 
+                        key={key}
+                        className={`cursor-pointer transition-all duration-200 hover:shadow-md ${
+                          activeSection === key 
+                            ? 'border-primary bg-primary/5 shadow-md' 
+                            : 'hover:border-primary/50'
+                        }`}
+                        onClick={() => setActiveSection(key)}
+                      >
+                        <CardContent className="p-3">
+                          <div className="flex items-center justify-between">
+                            <span className="font-medium text-foreground">{label}</span>
+                            <div className="flex gap-1">
+                              {key === 'summary' && (
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  className="h-8 px-3 text-xs hover:bg-primary/10 transition-colors"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleFieldEdit('summary', undefined, undefined, resumeData.summary);
+                                  }}
+                                >
+                                  <Edit className="h-3 w-3 mr-1" />
+                                  Edit
+                                </Button>
+                              )}
+                              {['experience', 'education', 'projects'].includes(key) && (
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  className="h-8 px-3 text-xs hover:bg-primary/10 transition-colors"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleAddItem(key);
+                                  }}
+                                >
+                                  <Plus className="h-3 w-3 mr-1" />
+                                  Add
+                                </Button>
+                              )}
+                            </div>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    ))}
+                  </div>
                 </div>
 
                 {activeSection === 'personal' && (
@@ -807,150 +829,13 @@ const ResumeCanvas = () => {
                 )}
               </TabsContent>
 
-              <TabsContent value="style" className="p-3 space-y-4">
-                <div className="space-y-2">
-                  <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300">Template</h3>
-                  <div className="grid grid-cols-2 gap-2">
-                    <div
-                      className={`p-2 border rounded-md cursor-pointer transition-all duration-200 ${selectedTemplate === 'modern' ? 'border-resume-purple dark:border-resume-purple-light bg-purple-50 dark:bg-purple-900/20' : 'border-gray-200 dark:border-gray-700 hover:border-resume-purple/50 dark:hover:border-resume-purple-light/50'}`}
-                      onClick={() => setSelectedTemplate('modern')}
-                    >
-                      <div className="h-16 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-md mb-1 flex flex-col p-1">
-                        <div className="w-1/2 h-2 bg-resume-purple dark:bg-resume-purple-light rounded mb-1"></div>
-                        <div className="w-1/3 h-1 bg-gray-200 dark:bg-gray-700 rounded mb-1.5"></div>
-                        <div className="flex space-x-1">
-                          <div className="w-1 h-1 bg-gray-200 dark:bg-gray-700 rounded-full"></div>
-                          <div className="w-1 h-1 bg-gray-200 dark:bg-gray-700 rounded-full"></div>
-                          <div className="w-1 h-1 bg-gray-200 dark:bg-gray-700 rounded-full"></div>
-                        </div>
-                      </div>
-                      <p className="text-xs text-center text-gray-700 dark:text-gray-300">Modern</p>
-                    </div>
-                    <div
-                      className={`p-2 border rounded-md cursor-pointer transition-all duration-200 ${selectedTemplate === 'classic' ? 'border-resume-purple dark:border-resume-purple-light bg-purple-50 dark:bg-purple-900/20' : 'border-gray-200 dark:border-gray-700 hover:border-resume-purple/50 dark:hover:border-resume-purple-light/50'}`}
-                      onClick={() => setSelectedTemplate('classic')}
-                    >
-                      <div className="h-16 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-md mb-1 flex flex-col p-1 items-center">
-                        <div className="w-2/3 h-2 bg-gray-800 dark:bg-gray-200 rounded mb-1"></div>
-                        <div className="w-1/2 h-1 bg-gray-200 dark:bg-gray-700 rounded mb-1.5"></div>
-                        <div className="w-full border-t border-gray-200 dark:border-gray-700 my-1"></div>
-                        <div className="w-full flex justify-between">
-                          <div className="w-1/4 h-1 bg-gray-200 dark:bg-gray-700 rounded"></div>
-                          <div className="w-1/4 h-1 bg-gray-200 dark:bg-gray-700 rounded"></div>
-                        </div>
-                      </div>
-                      <p className="text-xs text-center text-gray-700 dark:text-gray-300">Classic</p>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="space-y-2">
-                  <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300">Colors</h3>
-                  <div className="flex flex-wrap gap-2">
-                    <div
-                      className="w-6 h-6 rounded-full border border-gray-300 dark:border-gray-600 cursor-pointer transition-transform hover:scale-110"
-                      style={{ backgroundColor: resumeSettings.primaryColor }}
-                      onClick={() => {
-                        const color = prompt("Enter primary color (hex format)", resumeSettings.primaryColor);
-                        if (color && /^#[0-9A-Fa-f]{6}$/.test(color)) {
-                          setResumeSettings({ ...resumeSettings, primaryColor: color });
-                        }
-                      }}
-                    ></div>
-                    <div
-                      className="w-6 h-6 rounded-full border border-gray-300 dark:border-gray-600 cursor-pointer transition-transform hover:scale-110"
-                      style={{ backgroundColor: resumeSettings.secondaryColor }}
-                      onClick={() => {
-                        const color = prompt("Enter secondary color (hex format)", resumeSettings.secondaryColor);
-                        if (color && /^#[0-9A-Fa-f]{6}$/.test(color)) {
-                          setResumeSettings({ ...resumeSettings, secondaryColor: color });
-                        }
-                      }}
-                    ></div>
-                    <div
-                      className="w-6 h-6 rounded-full border border-gray-300 dark:border-gray-600 cursor-pointer transition-transform hover:scale-110"
-                      style={{ backgroundColor: resumeSettings.accentColor }}
-                      onClick={() => {
-                        const color = prompt("Enter accent color (hex format)", resumeSettings.accentColor);
-                        if (color && /^#[0-9A-Fa-f]{6}$/.test(color)) {
-                          setResumeSettings({ ...resumeSettings, accentColor: color });
-                        }
-                      }}
-                    ></div>
-                  </div>
-                </div>
-
-                <div className="space-y-2">
-                  <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300">Typography</h3>
-                  <div>
-                    <Label className="text-xs text-gray-600 dark:text-gray-400">Font Family</Label>
-                    <Select
-                      value={resumeSettings.fontFamily}
-                      onValueChange={(value) => setResumeSettings({ ...resumeSettings, fontFamily: value })}
-                    >
-                      <SelectTrigger className="h-8 mt-1 bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700">
-                        <SelectValue placeholder="Select font" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="Inter">Inter</SelectItem>
-                        <SelectItem value="Roboto">Roboto</SelectItem>
-                        <SelectItem value="Lato">Lato</SelectItem>
-                        <SelectItem value="Open Sans">Open Sans</SelectItem>
-                        <SelectItem value="Montserrat">Montserrat</SelectItem>
-                        <SelectItem value="Playfair Display">Playfair Display</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-
-                  <div className="space-y-2">
-                    <div className="flex items-center justify-between">
-                      <span className="text-xs text-gray-600 dark:text-gray-400">Font Size</span>
-                      <span className="text-xs font-medium text-gray-700 dark:text-gray-300">{resumeSettings.fontSize}pt</span>
-                    </div>
-                    <Slider
-                      defaultValue={[resumeSettings.fontSize]}
-                      min={8}
-                      max={14}
-                      step={0.5}
-                      className="w-full"
-                      onValueChange={(value) => setResumeSettings({ ...resumeSettings, fontSize: value[0] })}
-                    />
-                  </div>
-
-                  <div>
-                    <Label className="text-xs text-gray-600 dark:text-gray-400">Paper Size</Label>
-                    <Select
-                      value={resumeSettings.paperSize}
-                      onValueChange={(value: "a4" | "letter" | "legal") => setResumeSettings({ ...resumeSettings, paperSize: value })}
-                    >
-                      <SelectTrigger className="h-8 mt-1 bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700">
-                        <SelectValue placeholder="Select size" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="a4">A4</SelectItem>
-                        <SelectItem value="letter">US Letter</SelectItem>
-                        <SelectItem value="legal">US Legal</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-
-                  <div>
-                    <Label className="text-xs text-gray-600 dark:text-gray-400">Margins</Label>
-                    <Select
-                      value={resumeSettings.margins}
-                      onValueChange={(value: "narrow" | "normal" | "wide") => setResumeSettings({ ...resumeSettings, margins: value })}
-                    >
-                      <SelectTrigger className="h-8 mt-1 bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700">
-                        <SelectValue placeholder="Select margins" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="narrow">Narrow (0.5")</SelectItem>
-                        <SelectItem value="normal">Normal (1")</SelectItem>
-                        <SelectItem value="wide">Wide (1.5")</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
+              <TabsContent value="style" className="animate-fade-in">
+                <ResumeCanvasStyleTab 
+                  settings={resumeSettings}
+                  onSettingsChange={(newSettings) => setResumeSettings({ ...resumeSettings, ...newSettings })}
+                  selectedTemplate={selectedTemplate}
+                  onTemplateChange={setSelectedTemplate}
+                />
               </TabsContent>
             </Tabs>
           </div>
