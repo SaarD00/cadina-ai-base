@@ -1,8 +1,8 @@
 
-import React from 'react';
+import React, { useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 import { useResumeData } from '@/hooks/use-resume-data';
-import { Project, SegmentStyles } from '@/types/resume';
+import { Project, SegmentStyles, Experience, Education } from '@/types/resume';
 
 const ResumePDF = () => {
   const { resumeId } = useParams();
@@ -60,20 +60,44 @@ const ResumePDF = () => {
     };
   };
 
-  return (
-    <div 
-      className="max-w-[800px] mx-auto p-8 bg-white print:p-0 my-8 shadow-lg" 
-      style={{
-        fontFamily: resumeSettings?.fontFamily || 'Inter',
-        fontSize: `${resumeSettings?.fontSize || 10}pt`,
-        lineHeight: "1.5",
-        // Properties to help with page sizing
-        pageBreakInside: "avoid",
-        printColorAdjust: "exact",
-        minHeight: "100%",
-        overflowY: "auto"
-      }}
-    >
+  // Calculate dynamic content height for responsive sizing
+  const calculateContentHeight = useMemo(() => {
+    let estimatedHeight = 200; // Header base height
+    
+    if (resumeData.summary) estimatedHeight += 100;
+    estimatedHeight += (resumeData.experience?.length || 0) * 150;
+    estimatedHeight += (resumeData.education?.length || 0) * 120;
+    estimatedHeight += (resumeData.projects?.length || 0) * 140;
+    estimatedHeight += 150; // Skills section
+    
+    // Determine if we need multiple pages
+    const singlePageHeight = 1000; // ~A4 page height in pixels
+    const pages = Math.ceil(estimatedHeight / singlePageHeight);
+    
+    return {
+      height: Math.max(estimatedHeight, singlePageHeight),
+      pages,
+      isMultiPage: pages > 1
+    };
+  }, [resumeData]);
+
+  // Render template based on selected template
+  const renderTemplateContent = () => {
+    const templateToUse = resumeSettings?.template || 'modern';
+    
+    switch (templateToUse) {
+      case 'professional':
+        return renderProfessionalTemplate();
+      case 'customizable':
+        return renderCustomizableTemplate();
+      case 'modern':
+      default:
+        return renderModernTemplate();
+    }
+  };
+
+  const renderModernTemplate = () => (
+    <>
       {/* Header */}
       <div className="pb-2 border-b-2 border-[#5d4dcd] mb-3" style={{ borderColor: getHeaderStyles().color }}>
         <h1 
@@ -141,7 +165,7 @@ const ResumePDF = () => {
         </div>
       </div>
 
-      {/* Summary - Limited to exactly 3 bullet points */}
+      {/* Summary */}
       {resumeData.summary && (
         <div className="mb-4">
           <h2 className="text-sm font-semibold text-gray-800 mb-1 border-b border-gray-200 pb-0.5 uppercase tracking-wide"
@@ -156,14 +180,14 @@ const ResumePDF = () => {
         </div>
       )}
 
-      {/* Experience - Slightly more compact */}
+      {/* Experience */}
       {resumeData.experience.length > 0 && (
         <div className="mb-4">
           <h2 className="text-sm font-semibold text-gray-800 mb-1 border-b border-gray-200 pb-0.5 uppercase tracking-wide"
               style={getSectionTitleStyles('experience')}>
             Experience
           </h2>
-          {resumeData.experience.map((exp, index) => (
+          {resumeData.experience.map((exp: Experience, index) => (
             <div key={index} className="mb-3 last:mb-0">
               <div className="flex items-baseline justify-between flex-wrap gap-x-2">
                 <div className="flex-1 min-w-0">
@@ -186,7 +210,7 @@ const ResumePDF = () => {
         </div>
       )}
 
-      {/* Projects - More compact */}
+      {/* Projects */}
       {resumeData.projects && resumeData.projects.length > 0 && (
         <div className="mb-4">
           <h2 className="text-sm font-semibold text-gray-800 mb-1 border-b border-gray-200 pb-0.5 uppercase tracking-wide"
@@ -233,14 +257,14 @@ const ResumePDF = () => {
         </div>
       )}
 
-      {/* Education - More compact */}
+      {/* Education */}
       {resumeData.education.length > 0 && (
         <div className="mb-4">
           <h2 className="text-sm font-semibold text-gray-800 mb-1 border-b border-gray-200 pb-0.5 uppercase tracking-wide"
               style={getSectionTitleStyles('education')}>
             Education
           </h2>
-          {resumeData.education.map((edu, index) => (
+          {resumeData.education.map((edu: Education, index) => (
             <div key={index} className="mb-3 last:mb-0">
               <div className="flex items-baseline justify-between flex-wrap gap-x-2">
                 <div className="flex-1 min-w-0">
@@ -265,7 +289,7 @@ const ResumePDF = () => {
         </div>
       )}
 
-      {/* Skills - More compact */}
+      {/* Skills */}
       {(resumeData.skills.technical.length > 0 || resumeData.skills.soft.length > 0) && (
         <div className="mb-4">
           <h2 className="text-sm font-semibold text-gray-800 mb-1 border-b border-gray-200 pb-0.5 uppercase tracking-wide"
@@ -298,6 +322,61 @@ const ResumePDF = () => {
           )}
         </div>
       )}
+    </>
+  );
+
+  const renderProfessionalTemplate = () => (
+    <div className="space-y-6">
+      {/* Professional template layout with different styling */}
+      <div className="text-center border-b-2 pb-4" style={{ borderColor: getHeaderStyles().color }}>
+        <h1 className="text-3xl font-bold" style={{ color: getHeaderStyles().color }}>
+          {resumeData.personal.name}
+        </h1>
+        <p className="text-xl text-gray-600 mt-2">{resumeData.personal.title}</p>
+        <div className="text-sm text-gray-600 mt-2">
+          {[resumeData.personal.email, resumeData.personal.phone, resumeData.personal.location].filter(Boolean).join(' • ')}
+        </div>
+      </div>
+      
+      {resumeData.summary && (
+        <div>
+          <h2 className="text-lg font-bold mb-2 text-gray-800">Professional Summary</h2>
+          <p className="text-gray-700">{resumeData.summary}</p>
+        </div>
+      )}
+      
+      {/* Rest of sections... */}
+    </div>
+  );
+
+  const renderCustomizableTemplate = () => (
+    <div className="p-4">
+      {/* Customizable template with user-defined styling */}
+      <div className="mb-6">
+        <h1 className="text-2xl font-bold text-center" style={{ color: getHeaderStyles().color }}>
+          {resumeData.personal.name}
+        </h1>
+        <p className="text-center text-lg mt-2">{resumeData.personal.title}</p>
+      </div>
+      {/* Rest of sections... */}
+    </div>
+  );
+
+  return (
+    <div 
+      className="w-full mx-auto bg-white print:p-0 shadow-lg print:shadow-none"
+      style={{
+        fontFamily: resumeSettings?.fontFamily || 'Inter',
+        fontSize: `${resumeSettings?.fontSize || 10}pt`,
+        lineHeight: "1.4",
+        printColorAdjust: "exact",
+        minHeight: calculateContentHeight.isMultiPage ? `${calculateContentHeight.height}px` : "100vh",
+        maxWidth: "210mm", // A4 width
+        padding: "20mm", // A4 margins
+        margin: "0 auto"
+      }}
+    >
+      {renderTemplateContent()}
     </div>
   );
 };

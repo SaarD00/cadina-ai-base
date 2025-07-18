@@ -41,6 +41,8 @@ import { v4 as uuidv4 } from 'uuid';
 import { Card, CardContent } from '@/components/ui/card';
 import { ResumeLoadingSkeleton } from '@/components/resume-preview/LoadingSkeleton';
 import ModernTemplate from '@/components/resume-preview/ModernTemplate';
+import CustomizableTemplate from '@/components/resume-preview/CustomizableTemplate';
+import ProfessionalTemplate from '@/components/resume-preview/ProfessionalTemplate';
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -357,6 +359,50 @@ const ResumeCanvas = () => {
 
   const toggleAIAnalysis = () => {
     setIsAIAnalysisOpen(!isAIAnalysisOpen);
+  };
+
+  // Function to render the selected template
+  const renderSelectedTemplate = () => {
+    const templateToUse = selectedTemplate || resumeSettings.template || 'modern';
+
+    switch (templateToUse) {
+      case 'modern':
+        return (
+          <ModernTemplate
+            data={resumeData}
+            settings={resumeSettings}
+            onUpdateData={handleDataChange}
+            onGenerateWithAI={handleGenerateWithAI}
+          />
+        );
+      case 'professional':
+        return (
+          <ProfessionalTemplate
+            data={resumeData}
+            settings={resumeSettings}
+            onUpdateData={handleDataChange}
+            onGenerateWithAI={handleGenerateWithAI}
+          />
+        );
+      case 'customizable':
+        return (
+          <CustomizableTemplate
+            data={resumeData}
+            settings={resumeSettings}
+            onUpdateData={handleDataChange}
+            onGenerateWithAI={handleGenerateWithAI}
+          />
+        );
+      default:
+        return (
+          <ModernTemplate
+            data={resumeData}
+            settings={resumeSettings}
+            onUpdateData={handleDataChange}
+            onGenerateWithAI={handleGenerateWithAI}
+          />
+        );
+    }
   };
 
   if (isLoading) {
@@ -832,9 +878,18 @@ const ResumeCanvas = () => {
               <TabsContent value="style" className="animate-fade-in">
                 <ResumeCanvasStyleTab 
                   settings={resumeSettings}
-                  onSettingsChange={(newSettings) => setResumeSettings({ ...resumeSettings, ...newSettings })}
+                  onSettingsChange={(newSettings) => {
+                    setResumeSettings({ ...resumeSettings, ...newSettings });
+                    // Auto-save settings changes
+                    handleSave();
+                  }}
                   selectedTemplate={selectedTemplate}
-                  onTemplateChange={setSelectedTemplate}
+                  onTemplateChange={(templateId) => {
+                    setSelectedTemplate(templateId);
+                    setResumeSettings(prev => ({ ...prev, template: templateId }));
+                    // Auto-save template changes
+                    handleSave();
+                  }}
                 />
               </TabsContent>
             </Tabs>
@@ -928,13 +983,9 @@ const ResumeCanvas = () => {
                             <Download className="mr-2 h-4 w-4" /> Download PDF
                           </Button>
                         </div>
-                        <Card className="h-full flex-grow overflow-auto p-6 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
-                          <ModernTemplate
-                            data={resumeData}
-                            settings={resumeSettings}
-                            onUpdateData={handleDataChange}
-                          />
-                        </Card>
+                         <Card className="h-full flex-grow overflow-auto p-6 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
+                           {renderSelectedTemplate()}
+                         </Card>
                       </div>
                     </DialogContent>
                   </Dialog>
@@ -964,14 +1015,9 @@ const ResumeCanvas = () => {
               <div className="w-full h-max  p-6">
                 {isLoading ? (
                   <ResumeLoadingSkeleton />
-                ) : (
-                  <ModernTemplate
-                    data={resumeData}
-                    settings={resumeSettings}
-                    onUpdateData={handleDataChange}
-                    onGenerateWithAI={handleGenerateWithAI}
-                  />
-                )}
+                 ) : (
+                   renderSelectedTemplate()
+                 )}
               </div>
             </div>
           </div>
