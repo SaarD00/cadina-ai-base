@@ -4,7 +4,7 @@ import { Navigate, useLocation } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 
 // Define public paths for middleware to use
-export const publicPaths = ['/', '/sign-in', '/sign-up', '/privacy-policy'];
+export const publicPaths = ['/', '/sign-in', '/sign-up', '/privacy-policy', '/resume/pdf'];
 
 const isPublic = (path: string) => {
   return publicPaths.some(publicPath =>
