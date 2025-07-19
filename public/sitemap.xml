@@ -2,30 +2,47 @@
 <urlset 
   xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml"
+  xmlns:image="http://www.google.com/schemas/sitemap-image/1.1"
 >
   <url>
     <loc>https://www.vireia.com/</loc>
+    <lastmod>2025-01-19</lastmod>
     <priority>1.0</priority>
     <changefreq>daily</changefreq>
+    <image:image>
+      <image:loc>https://cdn.sanity.io/images/mrfd4see/production/e3f234428152d737495819dd61790c8cb1cbdc3c-1498x878.png</image:loc>
+      <image:caption>Vireia AI Resume Builder</image:caption>
+      <image:title>AI-Powered Resume Builder</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://www.vireia.com/templates</loc>
+    <lastmod>2025-01-19</lastmod>
+    <priority>0.9</priority>
+    <changefreq>weekly</changefreq>
+  </url>
+  <url>
+    <loc>https://www.vireia.com/blog</loc>
+    <lastmod>2025-01-19</lastmod>
+    <priority>0.8</priority>
+    <changefreq>weekly</changefreq>
   </url>
   <url>
     <loc>https://www.vireia.com/sign-in</loc>
-    <priority>0.8</priority>
+    <lastmod>2025-01-19</lastmod>
+    <priority>0.7</priority>
     <changefreq>monthly</changefreq>
   </url>
   <url>
     <loc>https://www.vireia.com/sign-up</loc>
-    <priority>0.8</priority>
-    <changefreq>monthly</changefreq>
-  </url>
-  <url>
-    <loc>https://www.vireia.com/#how-it-works</loc>
+    <lastmod>2025-01-19</lastmod>
     <priority>0.7</priority>
     <changefreq>monthly</changefreq>
   </url>
   <url>
-    <loc>https://www.vireia.com/#pricing</loc>
-    <priority>0.7</priority>
-    <changefreq>monthly</changefreq>
+    <loc>https://www.vireia.com/privacy-policy</loc>
+    <lastmod>2025-01-19</lastmod>
+    <priority>0.5</priority>
+    <changefreq>yearly</changefreq>
   </url>
 </urlset>

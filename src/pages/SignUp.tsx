@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
+import { useSEO } from '@/hooks/use-seo';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -32,6 +33,14 @@ type SignUpFormValues = z.infer<typeof signUpSchema>;
 const SignUp = () => {
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
+
+  useSEO({
+    title: 'Sign Up - Create Your Free Vireia AI Account',
+    description: 'Join thousands of professionals using Vireia AI to create ATS-optimized resumes. Free signup with instant access to AI-powered resume building tools and professional templates.',
+    canonical: 'https://www.vireia.com/sign-up',
+    keywords: 'sign up, create account, free resume builder, AI resume account, Vireia AI registration, professional resume tools',
+    noindex: false
+  });
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 

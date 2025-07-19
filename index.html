@@ -59,17 +59,73 @@
             "@type": "WebSite",
             "name": "Vireia AI",
             "url": "https://www.vireia.com",
+            "description": "AI-powered resume builder that creates ATS-optimized resumes",
             "potentialAction": {
               "@type": "SearchAction",
-              "target": "https://www.vireia.com/search?q={search_term_string}",
+              "target": "https://www.vireia.com/templates?q={search_term_string}",
               "query-input": "required name=search_term_string"
+            },
+            "mainEntity": {
+              "@type": "SoftwareApplication",
+              "name": "Vireia AI Resume Builder",
+              "applicationCategory": "BusinessApplication",
+              "operatingSystem": "Web Browser",
+              "offers": {
+                "@type": "Offer",
+                "price": "0",
+                "priceCurrency": "USD"
+              }
             }
           },
           {
             "@type": "Organization",
             "name": "Vireia AI",
             "url": "https://www.vireia.com",
-            "logo": "https://www.vireia.com/logo.png"
+            "logo": {
+              "@type": "ImageObject",
+              "url": "https://www.vireia.com/logo.png",
+              "width": 256,
+              "height": 256
+            },
+            "description": "AI-powered resume builder helping professionals create ATS-optimized resumes",
+            "foundingDate": "2024",
+            "contactPoint": {
+              "@type": "ContactPoint",
+              "contactType": "customer service",
+              "url": "https://www.vireia.com"
+            },
+            "sameAs": [
+              "https://github.com/SaarD00/vireia-ai"
+            ]
+          },
+          {
+            "@type": "FAQPage",
+            "mainEntity": [
+              {
+                "@type": "Question",
+                "name": "Is Vireia AI free to use?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "Yes, Vireia AI is completely free to use with all premium features unlocked during our launch period."
+                }
+              },
+              {
+                "@type": "Question", 
+                "name": "Are the resumes ATS-optimized?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "Yes, all our resume templates are designed to pass through Applicant Tracking Systems (ATS) and get noticed by hiring managers."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "How does the AI help with resume building?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "Our AI analyzes your resume content, suggests improvements, optimizes for specific job descriptions, and provides real-time ATS scoring."
+                }
+              }
+            ]
           }
         ]
       }

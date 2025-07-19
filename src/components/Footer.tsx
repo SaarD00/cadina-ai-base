@@ -1,5 +1,6 @@
 
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { FileText, Twitter, Linkedin, Instagram, Mail, Github } from 'lucide-react';
 
 const Footer = () => {
@@ -40,30 +41,30 @@ const Footer = () => {
           <div className="animate-slide-in-left animate-delay-200">
             <h4 className="font-semibold mb-4 text-white">Product</h4>
             <ul className="space-y-3 text-resume-gray-light">
-              <li><a href="#" className="hover:text-white transition-colors hover:underline">Features</a></li>
-              <li><a href="#" className="hover:text-white transition-colors hover:underline">Templates</a></li>
-              <li><a href="#" className="hover:text-white transition-colors hover:underline">Pricing</a></li>
-              <li><a href="#" className="hover:text-white transition-colors hover:underline">Testimonials</a></li>
+              <li><Link to="/#how-it-works" className="hover:text-white transition-colors hover:underline">Features</Link></li>
+              <li><Link to="/templates" className="hover:text-white transition-colors hover:underline">Resume Templates</Link></li>
+              <li><Link to="/#pricing" className="hover:text-white transition-colors hover:underline">Pricing</Link></li>
+              <li><Link to="/sign-up" className="hover:text-white transition-colors hover:underline">Get Started</Link></li>
             </ul>
           </div>
           
           <div className="animate-slide-in-left animate-delay-300">
             <h4 className="font-semibold mb-4 text-white">Resources</h4>
             <ul className="space-y-3 text-resume-gray-light">
-              <li><a href="#" className="hover:text-white transition-colors hover:underline">Career Blog</a></li>
-              <li><a href="#" className="hover:text-white transition-colors hover:underline">Resume Guide</a></li>
-              <li><a href="#" className="hover:text-white transition-colors hover:underline">Interview Tips</a></li>
-              <li><a href="#" className="hover:text-white transition-colors hover:underline">Job Search</a></li>
+              <li><Link to="/blog" className="hover:text-white transition-colors hover:underline">Career Blog</Link></li>
+              <li><Link to="/templates" className="hover:text-white transition-colors hover:underline">Resume Templates</Link></li>
+              <li><Link to="/blog" className="hover:text-white transition-colors hover:underline">Interview Tips</Link></li>
+              <li><Link to="/sign-up" className="hover:text-white transition-colors hover:underline">AI Resume Builder</Link></li>
             </ul>
           </div>
           
           <div className="animate-slide-in-left animate-delay-400">
             <h4 className="font-semibold mb-4 text-white">Company</h4>
             <ul className="space-y-3 text-resume-gray-light">
-              <li><a href="#" className="hover:text-white transition-colors hover:underline">About Us</a></li>
-              <li><a href="#" className="hover:text-white transition-colors hover:underline">Contact</a></li>
-              <li><a href="/privacy-policy" className="hover:text-white transition-colors hover:underline">Privacy Policy</a></li>
-              <li><a href="#" className="hover:text-white transition-colors hover:underline">Terms of Service</a></li>
+              <li><Link to="/" className="hover:text-white transition-colors hover:underline">About Vireia AI</Link></li>
+              <li><a href="https://github.com/SaarD00/vireia-ai" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors hover:underline">Open Source</a></li>
+              <li><Link to="/privacy-policy" className="hover:text-white transition-colors hover:underline">Privacy Policy</Link></li>
+              <li><Link to="/privacy-policy" className="hover:text-white transition-colors hover:underline">Terms of Service</Link></li>
             </ul>
           </div>
         </div>

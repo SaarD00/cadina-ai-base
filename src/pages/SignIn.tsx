@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { FileText, Mail, Lock, ArrowRight, Eye, EyeOff } from 'lucide-react';
+import { useSEO } from '@/hooks/use-seo';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
@@ -13,6 +14,14 @@ import ResetPasswordDialog from '@/components/auth/ResetPasswordDialog';
 const SignIn = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
+
+  useSEO({
+    title: 'Sign In - Vireia AI Resume Builder',
+    description: 'Sign in to your Vireia AI account to access your resumes, AI-powered optimization tools, and personalized career features. Secure login for professional resume building.',
+    canonical: 'https://www.vireia.com/sign-in',
+    keywords: 'sign in, login, resume builder login, AI resume account, Vireia AI login',
+    noindex: false
+  });
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);

@@ -6,10 +6,48 @@ import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
 import AppSidebar from '@/components/AppSidebar';
+import { useSEO } from '@/hooks/use-seo';
+import { Breadcrumbs } from '@/components/Breadcrumbs';
 
 const Templates = () => {
   const [isLoaded, setIsLoaded] = useState(false);
   const { toast } = useToast();
+
+  useSEO({
+    title: 'Free ATS Resume Templates | Professional Designs - Vireia AI',
+    description: 'Browse our collection of free, ATS-optimized resume templates. Professional designs for every industry - technical, creative, executive, and academic roles. Download and customize instantly.',
+    canonical: 'https://www.vireia.com/templates',
+    keywords: 'free resume templates, ATS resume templates, professional resume templates, resume designs, CV templates, modern resume templates, technical resume, creative resume, executive resume',
+    structuredData: {
+      "@context": "https://schema.org",
+      "@type": "CollectionPage",
+      "name": "Resume Templates Collection",
+      "description": "Professional ATS-optimized resume templates for all industries",
+      "url": "https://www.vireia.com/templates",
+      "mainEntity": {
+        "@type": "ItemList",
+        "name": "Resume Templates",
+        "numberOfItems": 6,
+        "itemListElement": [
+          {
+            "@type": "CreativeWork",
+            "name": "Modern Professional Template",
+            "description": "ATS-friendly minimalist design for professional roles"
+          },
+          {
+            "@type": "CreativeWork", 
+            "name": "Creative Portfolio Template",
+            "description": "Design-focused template for creative professionals"
+          },
+          {
+            "@type": "CreativeWork",
+            "name": "Technical Specialist Template", 
+            "description": "Optimized for technical and engineering roles"
+          }
+        ]
+      }
+    }
+  });
   
   useEffect(() => {
     setIsLoaded(true);
@@ -98,6 +136,8 @@ const Templates = () => {
         
         <SidebarInset>
           <div className="container max-w-7xl mx-auto px-4 py-8">
+            <Breadcrumbs />
+            
             {/* Page Header */}
             <div className={`flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8 ${isLoaded ? 'animate-fade-in' : 'opacity-0'}`}>
               <div>

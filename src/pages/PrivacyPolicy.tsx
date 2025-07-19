@@ -3,13 +3,36 @@ import React from 'react';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft, Shield, AlertTriangle, Coffee, Heart } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { useSEO } from '@/hooks/use-seo';
+import { Breadcrumbs } from '@/components/Breadcrumbs';
 
 const PrivacyPolicy = () => {
   const navigate = useNavigate();
 
+  useSEO({
+    title: 'Privacy Policy & Terms of Service - Vireia AI',
+    description: 'Learn about Vireia AI\'s privacy policy, terms of service, and data protection practices. Understand how we handle your resume data and personal information securely.',
+    canonical: 'https://www.vireia.com/privacy-policy',
+    keywords: 'privacy policy, terms of service, data protection, resume data security, personal information, GDPR compliance',
+    structuredData: {
+      "@context": "https://schema.org",
+      "@type": "WebPage",
+      "name": "Privacy Policy & Terms of Service",
+      "description": "Privacy policy and terms of service for Vireia AI resume builder",
+      "url": "https://www.vireia.com/privacy-policy",
+      "lastReviewed": new Date().toISOString().split('T')[0],
+      "publisher": {
+        "@type": "Organization",
+        "name": "Vireia AI"
+      }
+    }
+  });
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-resume-purple/5 to-resume-violet/5">
       <div className="container px-4 md:px-6 py-12 max-w-4xl mx-auto">
+        <Breadcrumbs />
+        
         <div className="mb-8">
           <Button 
             variant="outline" 

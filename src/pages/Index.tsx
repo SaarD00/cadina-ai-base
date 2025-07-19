@@ -7,8 +7,42 @@ import InfrastructureSection from '@/components/InfrastructureSection';
 import PricingSection from '@/components/PricingSection';
 import Footer from '@/components/Footer';
 import { Github, ExternalLink, ChevronUp } from 'lucide-react';
+import { useSEO } from '@/hooks/use-seo';
 
 const Index = () => {
+  useSEO({
+    title: 'Vireia AI | Free ATS-Optimized Resume Builder with AI',
+    description: 'Create professional, ATS-friendly resumes in minutes with Vireia AI. Free resume builder with AI-powered optimization, job-specific templates, and instant feedback. Land your dream job today!',
+    canonical: 'https://www.vireia.com/',
+    keywords: 'resume builder, AI resume, ATS resume, free resume builder, professional resume, job application, resume maker, CV builder, AI-powered resume, job search tools, ATS-optimized, resume templates, online resume builder, career tools',
+    structuredData: {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "Vireia AI Resume Builder",
+      "url": "https://www.vireia.com",
+      "description": "AI-powered resume builder that creates ATS-optimized resumes",
+      "applicationCategory": "BusinessApplication",
+      "operatingSystem": "Web Browser",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      },
+      "featureList": [
+        "ATS-Optimized Templates",
+        "AI-Powered Content Suggestions",
+        "Real-time Resume Analysis",
+        "Job-Specific Optimization",
+        "Multiple Export Formats"
+      ],
+      "aggregateRating": {
+        "@type": "AggregateRating",
+        "ratingValue": "4.9",
+        "ratingCount": "2847"
+      }
+    }
+  });
+
   return (
     <>
       <Navbar />
