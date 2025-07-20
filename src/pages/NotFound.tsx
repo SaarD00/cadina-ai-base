@@ -41,14 +41,14 @@ const TETROMINOES = {
 };
 
 const COLORS = {
-  I: 'bg-cyan-400',
-  O: 'bg-yellow-400',
-  T: 'bg-purple-400',
-  S: 'bg-green-400',
-  Z: 'bg-red-400',
-  J: 'bg-blue-400',
-  L: 'bg-orange-400',
-  0: 'bg-gray-800'
+  I: 'bg-gradient-to-br from-primary to-primary/80',
+  O: 'bg-gradient-to-br from-accent to-accent/80', 
+  T: 'bg-gradient-to-br from-secondary to-secondary/80',
+  S: 'bg-gradient-to-br from-emerald-500 to-emerald-600',
+  Z: 'bg-gradient-to-br from-rose-500 to-rose-600',
+  J: 'bg-gradient-to-br from-blue-500 to-blue-600',
+  L: 'bg-gradient-to-br from-orange-500 to-orange-600',
+  0: 'bg-muted/20 border border-border/20'
 };
 
 const createEmptyBoard = () => 
@@ -276,7 +276,7 @@ const NotFound = () => {
         {row.map((cell, x) => (
           <div
             key={x}
-            className={`w-6 h-6 border border-gray-600 ${COLORS[cell] || COLORS[0]}`}
+            className={`w-5 h-5 sm:w-6 sm:h-6 ${COLORS[cell] || COLORS[0]} transition-all duration-150 hover:brightness-110`}
           />
         ))}
       </div>
@@ -284,23 +284,23 @@ const NotFound = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary/10 via-secondary/5 to-accent/10 p-4">
+    <div className="min-h-screen bg-gradient-to-br from-primary/10 via-background to-accent/5 p-4">
       <div className="max-w-6xl mx-auto">
         {/* Header */}
-        <div className="text-center mb-8">
-          <h1 className="text-6xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent mb-4">
+        <div className="text-center mb-6 sm:mb-8">
+          <h1 className="text-4xl sm:text-6xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent mb-4">
             404
           </h1>
-          <h2 className="text-2xl font-semibold text-foreground mb-2">
+          <h2 className="text-xl sm:text-2xl font-semibold text-foreground mb-2">
             Page Not Found
           </h2>
-          <p className="text-muted-foreground mb-6">
+          <p className="text-muted-foreground mb-6 text-sm sm:text-base">
             But hey, why not play some Tetris while you're here?
           </p>
           
-          <div className="flex justify-center gap-4 mb-8">
+          <div className="flex justify-center gap-4 mb-6 sm:mb-8">
             <a href="/">
-              <Button variant="default">
+              <Button variant="default" className="text-sm sm:text-base">
                 <Home className="w-4 h-4 mr-2" />
                 Return to Home
               </Button>
@@ -309,35 +309,45 @@ const NotFound = () => {
         </div>
 
         {/* Game Container */}
-        <div className="flex flex-col lg:flex-row gap-8 items-start justify-center">
+        <div className="flex flex-col xl:flex-row gap-6 sm:gap-8 items-start justify-center">
           {/* Game Board */}
-          <Card className="bg-card/50 backdrop-blur-sm border-border/20">
-            <CardHeader className="text-center">
-              <CardTitle className="text-2xl font-bold text-primary">Tetris</CardTitle>
+          <Card className="bg-card/80 backdrop-blur-sm border-border/30 shadow-2xl w-full xl:w-auto">
+            <CardHeader className="text-center pb-4">
+              <CardTitle className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+                Tetris
+              </CardTitle>
             </CardHeader>
             <CardContent className="flex flex-col items-center gap-4">
-              <div className="bg-black p-4 rounded-lg border-2 border-primary/20">
+              <div className="bg-gradient-to-br from-background/90 to-muted/30 p-3 sm:p-4 rounded-xl border border-border/40 shadow-inner">
                 {renderBoard()}
               </div>
               
               {/* Game Controls */}
-              <div className="flex gap-2">
+              <div className="flex flex-wrap gap-2 justify-center">
                 {!gameRunning && !gameOver && (
-                  <Button onClick={startGame} className="bg-green-600 hover:bg-green-700">
+                  <Button 
+                    onClick={startGame} 
+                    className="bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white"
+                    size="sm"
+                  >
                     <Play className="w-4 h-4 mr-2" />
                     Start
                   </Button>
                 )}
                 
                 {gameRunning && (
-                  <Button onClick={togglePause} variant="outline">
+                  <Button onClick={togglePause} variant="outline" size="sm">
                     <Pause className="w-4 h-4 mr-2" />
                     Pause
                   </Button>
                 )}
                 
                 {gameOver && (
-                  <Button onClick={startGame} className="bg-primary hover:bg-primary/90">
+                  <Button 
+                    onClick={startGame} 
+                    className="bg-gradient-to-r from-primary to-accent hover:opacity-90"
+                    size="sm"
+                  >
                     <Play className="w-4 h-4 mr-2" />
                     Restart
                   </Button>
@@ -345,66 +355,93 @@ const NotFound = () => {
               </div>
 
               {gameOver && (
-                <div className="text-center p-4 bg-destructive/10 rounded-lg border border-destructive/20">
-                  <h3 className="text-xl font-bold text-destructive mb-2">Game Over!</h3>
-                  <p className="text-muted-foreground">Final Score: {score}</p>
+                <div className="text-center p-4 bg-gradient-to-br from-destructive/10 to-destructive/5 rounded-xl border border-destructive/20 backdrop-blur-sm">
+                  <h3 className="text-lg sm:text-xl font-bold text-destructive mb-2">Game Over!</h3>
+                  <p className="text-muted-foreground text-sm sm:text-base">Final Score: {score}</p>
                 </div>
               )}
             </CardContent>
           </Card>
 
           {/* Score Panel */}
-          <Card className="bg-card/50 backdrop-blur-sm border-border/20 min-w-[200px]">
-            <CardHeader>
-              <CardTitle className="text-xl text-center text-primary">Stats</CardTitle>
+          <Card className="bg-card/80 backdrop-blur-sm border-border/30 shadow-2xl w-full xl:min-w-[250px] xl:max-w-[250px]">
+            <CardHeader className="pb-4">
+              <CardTitle className="text-lg sm:text-xl text-center bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+                Game Stats
+              </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="text-center">
-                <div className="text-2xl font-bold text-foreground">{score}</div>
+              <div className="text-center p-3 rounded-lg bg-gradient-to-br from-primary/10 to-primary/5 border border-primary/20">
+                <div className="text-2xl sm:text-3xl font-bold text-primary">{score}</div>
                 <div className="text-sm text-muted-foreground">Score</div>
               </div>
               
-              <div className="text-center">
-                <div className="text-xl font-semibold text-foreground">{lines}</div>
-                <div className="text-sm text-muted-foreground">Lines</div>
-              </div>
-              
-              <div className="text-center">
-                <div className="text-xl font-semibold text-foreground">{level}</div>
-                <div className="text-sm text-muted-foreground">Level</div>
+              <div className="grid grid-cols-2 gap-3">
+                <div className="text-center p-3 rounded-lg bg-gradient-to-br from-accent/10 to-accent/5 border border-accent/20">
+                  <div className="text-lg sm:text-xl font-semibold text-foreground">{lines}</div>
+                  <div className="text-xs text-muted-foreground">Lines</div>
+                </div>
+                
+                <div className="text-center p-3 rounded-lg bg-gradient-to-br from-secondary/10 to-secondary/5 border border-secondary/20">
+                  <div className="text-lg sm:text-xl font-semibold text-foreground">{level}</div>
+                  <div className="text-xs text-muted-foreground">Level</div>
+                </div>
               </div>
 
               {/* Controls Guide */}
               <div className="pt-4 border-t border-border/20">
-                <h4 className="font-semibold text-sm text-foreground mb-2">Controls:</h4>
-                <div className="space-y-1 text-xs text-muted-foreground">
-                  <div className="flex items-center gap-2">
-                    <ArrowDown className="w-3 h-3" />
-                    <span>Arrow Keys: Move</span>
+                <h4 className="font-semibold text-sm text-foreground mb-3">Desktop Controls:</h4>
+                <div className="space-y-2 text-xs text-muted-foreground">
+                  <div className="flex items-center gap-2 p-2 rounded-md bg-muted/30">
+                    <ArrowDown className="w-3 h-3 text-primary" />
+                    <span>Arrow Keys: Move & Drop</span>
                   </div>
-                  <div className="flex items-center gap-2">
-                    <RotateCw className="w-3 h-3" />
+                  <div className="flex items-center gap-2 p-2 rounded-md bg-muted/30">
+                    <RotateCw className="w-3 h-3 text-primary" />
                     <span>↑ or Space: Rotate</span>
                   </div>
                 </div>
               </div>
 
               {/* Mobile Controls */}
-              <div className="lg:hidden grid grid-cols-3 gap-2 pt-4">
-                <Button variant="outline" size="sm" onClick={() => movePiece(-1, 0)}>
-                  ←
-                </Button>
-                <Button variant="outline" size="sm" onClick={rotateCurrent}>
-                  <RotateCw className="w-4 h-4" />
-                </Button>
-                <Button variant="outline" size="sm" onClick={() => movePiece(1, 0)}>
-                  →
-                </Button>
-                <div></div>
-                <Button variant="outline" size="sm" onClick={() => movePiece(0, 1)}>
-                  ↓
-                </Button>
-                <div></div>
+              <div className="xl:hidden pt-4 border-t border-border/20">
+                <h4 className="font-semibold text-sm text-foreground mb-3 text-center">Touch Controls:</h4>
+                <div className="grid grid-cols-3 gap-2 max-w-[200px] mx-auto">
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    onClick={() => movePiece(-1, 0)}
+                    className="h-12 bg-gradient-to-br from-primary/5 to-primary/10 border-primary/20 hover:bg-primary/20"
+                  >
+                    ←
+                  </Button>
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    onClick={rotateCurrent}
+                    className="h-12 bg-gradient-to-br from-accent/5 to-accent/10 border-accent/20 hover:bg-accent/20"
+                  >
+                    <RotateCw className="w-4 h-4" />
+                  </Button>
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    onClick={() => movePiece(1, 0)}
+                    className="h-12 bg-gradient-to-br from-primary/5 to-primary/10 border-primary/20 hover:bg-primary/20"
+                  >
+                    →
+                  </Button>
+                  <div></div>
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    onClick={() => movePiece(0, 1)}
+                    className="h-12 bg-gradient-to-br from-secondary/5 to-secondary/10 border-secondary/20 hover:bg-secondary/20"
+                  >
+                    ↓
+                  </Button>
+                  <div></div>
+                </div>
               </div>
             </CardContent>
           </Card>

@@ -218,9 +218,9 @@ const Dashboard = () => {
       )}
 
       {!showOnboarding && (
-        <SidebarProvider defaultOpen={true}>
+        <SidebarProvider defaultOpen={false}>
           <div className="min-h-screen flex w-full bg-gradient-to-br from-primary/5 via-background to-primary/10">
-            <Sidebar className="bg-white/50 backdrop-blur-xl border-r border-primary/10">
+            <Sidebar className="bg-card/80 backdrop-blur-xl border-r border-border/50">
               <SidebarHeader>
                 <div className="flex items-center gap-3 px-4 py-3">
                   <div className="rounded-xl p-2 bg-gradient-to-br from-primary to-primary/80 shadow-lg">
@@ -322,21 +322,21 @@ const Dashboard = () => {
             </Sidebar>
 
             <SidebarInset className="bg-transparent">
-              <div className="container max-w-7xl mx-auto px-6 py-8">
+              <div className="container max-w-7xl mx-auto px-4 sm:px-6 py-4 sm:py-8">
                 {/* Dynamic Welcome Section */}
-                <div className={`mb-8 ${isLoaded ? 'animate-fade-in' : 'opacity-0'}`}>
-                  <div className="bg-white/60 backdrop-blur-xl rounded-3xl border border-primary/10 p-8 shadow-xl">
-                    <div className="flex items-center justify-between">
+                <div className={`mb-6 sm:mb-8 ${isLoaded ? 'animate-fade-in' : 'opacity-0'}`}>
+                  <div className="bg-card/60 backdrop-blur-xl rounded-2xl sm:rounded-3xl border border-border/20 p-4 sm:p-8 shadow-xl">
+                    <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 lg:gap-0">
                       <div className="flex-1">
                         <div className="flex items-center gap-3 mb-4">
-                          <div className="h-12 w-12 rounded-full bg-gradient-to-br from-primary to-primary/80 flex items-center justify-center">
-                            <Sparkles className="h-6 w-6 text-white" />
+                          <div className="h-10 w-10 sm:h-12 sm:w-12 rounded-full bg-gradient-to-br from-primary to-primary/80 flex items-center justify-center">
+                            <Sparkles className="h-5 w-5 sm:h-6 sm:w-6 text-primary-foreground" />
                           </div>
                           <div>
-                            <h1 className="text-3xl font-bold bg-gradient-to-r from-primary via-primary/80 to-primary/60 bg-clip-text text-transparent">
+                            <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold bg-gradient-to-r from-primary via-primary/80 to-primary/60 bg-clip-text text-transparent">
                               Welcome back!
                             </h1>
-                            <p className="text-muted-foreground">
+                            <p className="text-sm sm:text-base text-muted-foreground">
                               {resumes.length > 0 
                                 ? `You're making great progress with ${resumes.length} resume${resumes.length > 1 ? 's' : ''}`
                                 : "Let's create your first impressive resume"
@@ -346,16 +346,16 @@ const Dashboard = () => {
                         </div>
                         
                         {/* Quick Actions */}
-                        <div className="flex flex-wrap gap-3">
+                        <div className="flex flex-col sm:flex-row flex-wrap gap-2 sm:gap-3">
                           <Button
                             onClick={() => setShowCreateDialog(true)}
-                            className="bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 text-white shadow-lg hover:shadow-xl transition-all duration-300"
+                            className="bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 text-primary-foreground shadow-lg hover:shadow-xl transition-all duration-300 text-sm sm:text-base"
                           >
                             <Plus className="h-4 w-4 mr-2" />
                             Create New Resume
                           </Button>
                           {resumes.length > 0 && (
-                            <Button variant="outline" asChild className="border-primary/20 hover:bg-primary/5">
+                            <Button variant="outline" asChild className="border-border hover:bg-accent text-sm sm:text-base">
                               <Link to={`/resume-builder/${resumes[0].id}`}>
                                 <FileText className="h-4 w-4 mr-2" />
                                 Continue Editing
@@ -367,13 +367,13 @@ const Dashboard = () => {
                       
                       {/* Rank Badge */}
                       {userRanking && (
-                        <div className="ml-8 text-center">
-                          <div className="bg-gradient-to-br from-primary/10 to-primary/5 rounded-2xl p-6 border border-primary/20">
+                        <div className="lg:ml-8 text-center">
+                          <div className="bg-gradient-to-br from-primary/10 to-primary/5 rounded-xl sm:rounded-2xl p-4 sm:p-6 border border-border/20">
                             <div className="flex justify-center mb-2">
                               {getTierIcon(stats.rankTier)}
                             </div>
-                            <div className="text-2xl font-bold text-primary">#{stats.currentRank}</div>
-                            <div className="text-sm text-muted-foreground capitalize">{stats.rankTier} Tier</div>
+                            <div className="text-xl sm:text-2xl font-bold text-primary">#{stats.currentRank}</div>
+                            <div className="text-xs sm:text-sm text-muted-foreground capitalize">{stats.rankTier} Tier</div>
                             <div className="text-xs text-primary/70 mt-1">{stats.totalScore} points</div>
                           </div>
                         </div>
@@ -383,7 +383,7 @@ const Dashboard = () => {
                 </div>
 
                 {/* Enhanced Stats Grid */}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-6 sm:mb-8">
                   <Card className={`bg-gradient-to-br from-primary to-primary/80 text-white border-0 shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105 ${isLoaded ? 'animate-fade-in' : 'opacity-0'}`}>
                     <CardHeader className="pb-3">
                       <div className="flex items-center justify-between">
