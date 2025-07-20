@@ -3,7 +3,9 @@ import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Navbar } from '@/components/Navbar';
 import HeroSection from '@/components/HeroSection';
-import InfrastructureSection from '@/components/InfrastructureSection';
+import EnhancedInfrastructureSection from '@/components/EnhancedInfrastructureSection';
+import TestimonialsSection from '@/components/TestimonialsSection';
+import DemoSection from '@/components/DemoSection';
 import PricingSection from '@/components/PricingSection';
 import Footer from '@/components/Footer';
 import { Github, ExternalLink, ChevronUp } from 'lucide-react';
@@ -148,7 +150,11 @@ const Index = () => {
           </div>
         </section>
         
-        <InfrastructureSection />
+        <EnhancedInfrastructureSection />
+        
+        <TestimonialsSection />
+        
+        <DemoSection />
 
         {/* Trust & Community Section */}
         <section className="py-20 relative overflow-hidden">
