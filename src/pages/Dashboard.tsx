@@ -60,6 +60,37 @@ const Dashboard = () => {
   const [loadingData, setLoadingData] = useState(true);
   const { toast } = useToast();
 
+  // Function to calculate correct ranks based on scores
+  const calculateCorrectRanks = (players: TopPlayer[]): TopPlayer[] => {
+    // Sort by score descending, then assign ranks
+    const sortedPlayers = [...players].sort((a, b) => b.total_score - a.total_score);
+    
+    let currentRank = 1;
+    const rankedPlayers: TopPlayer[] = [];
+    
+    for (let i = 0; i < sortedPlayers.length; i++) {
+      const player = sortedPlayers[i];
+      
+      // If this player has the same score as the previous player, use the same rank
+      if (i > 0 && sortedPlayers[i - 1].total_score === player.total_score) {
+        rankedPlayers.push({
+          ...player,
+          current_rank: rankedPlayers[i - 1].current_rank
+        });
+      } else {
+        rankedPlayers.push({
+          ...player,
+          current_rank: currentRank
+        });
+      }
+      
+      // Update current rank for next iteration (handles ties properly)
+      currentRank = i + 2;
+    }
+    
+    return rankedPlayers;
+  };
+
   useEffect(() => {
     const initializeDashboard = async () => {
       try {
@@ -79,32 +110,49 @@ const Dashboard = () => {
             setResumes(resumesData || []);
           }
 
-          // Fetch user's ranking data
-          const { data: rankingData, error: rankingError } = await supabase
+          // Fetch all rankings to calculate correct user rank
+          const { data: allRankingsData, error: allRankingsError } = await supabase
             .from('user_rankings')
-            .select('id, user_id, current_rank, total_score, rank_tier, rank_category, last_updated')
-            .eq('user_id', session.user.id)
+            .select('user_id, current_rank, total_score, rank_tier, rank_category, last_updated')
             .eq('rank_category', 'overall')
-            .single();
+            .order('total_score', { ascending: false });
 
-          if (rankingError && rankingError.code !== 'PGRST116') {
-            console.error('Error fetching user ranking:', rankingError);
+          if (allRankingsError) {
+            console.error('Error fetching rankings:', allRankingsError);
           } else {
-            setUserRanking(rankingData);
+            // Calculate correct ranks for all users
+            const allUsersWithCorrectRanks = calculateCorrectRanks(allRankingsData || []);
+            
+            // Find the current user's ranking
+            const userRankingData = allUsersWithCorrectRanks.find(r => r.user_id === session.user.id);
+            
+            if (userRankingData) {
+              setUserRanking({
+                id: userRankingData.user_id,
+                user_id: userRankingData.user_id,
+                current_rank: userRankingData.current_rank,
+                total_score: userRankingData.total_score,
+                rank_tier: userRankingData.rank_tier,
+                rank_category: 'overall',
+                last_updated: new Date().toISOString()
+              });
+            }
           }
 
-          // Fetch top players for leaderboard
+          // Fetch top players for leaderboard - sort by score instead of rank
           const { data: topPlayersData, error: topPlayersError } = await supabase
             .from('user_rankings')
             .select('user_id, current_rank, total_score, rank_tier')
             .eq('rank_category', 'overall')
-            .order('current_rank', { ascending: true })
-            .limit(5);
+            .order('total_score', { ascending: false })
+            .limit(20); // Fetch more to handle ties properly
 
           if (topPlayersError) {
             console.error('Error fetching top players:', topPlayersError);
           } else {
-            setTopPlayers(topPlayersData || []);
+            // Calculate correct ranks based on scores
+            const playersWithCorrectRanks = calculateCorrectRanks(topPlayersData || []);
+            setTopPlayers(playersWithCorrectRanks.slice(0, 5));
           }
         }
       } catch (error) {
