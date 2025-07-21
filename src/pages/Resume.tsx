@@ -249,13 +249,13 @@ const Resume = () => {
           <SidebarFooter>
             <SidebarMenu>
               <SidebarMenuItem>
-                <SidebarMenuButton tooltip="Settings">
+                <SidebarMenuButton tooltip="Settings" onClick={() => navigate('/settings')}>
                   <Cog className="h-5 w-5" />
                   <span>Settings</span>
                 </SidebarMenuButton>
               </SidebarMenuItem>
               <SidebarMenuItem>
-                <SidebarMenuButton tooltip="Account">
+                <SidebarMenuButton tooltip="Account" onClick={() => navigate('/account')}>
                   <User className="h-5 w-5" />
                   <span>Account</span>
                 </SidebarMenuButton>

@@ -13,6 +13,8 @@ import ResumeCanvas from "./pages/ResumeCanvas";
 import Applications from "./pages/Applications";
 import Analytics from "./pages/Analytics";
 import Templates from "./pages/Templates";
+import Settings from "./pages/Settings";
+import Account from "./pages/Account";
 import Blog from "./pages/Blog";
 import NotFound from "./pages/NotFound";
 import SignIn from "./pages/SignIn";
@@ -44,6 +46,8 @@ const App = () => (
             <Route path="/applications" element={<Applications />} />
             <Route path="/analytics" element={<Analytics />} />
             <Route path="/templates" element={<Templates />} />
+            <Route path="/settings" element={<Settings />} />
+            <Route path="/account" element={<Account />} />
             
             {/* Catch-all route */}
             <Route path="*" element={<NotFound />} />
