@@ -16,6 +16,7 @@ import Templates from "./pages/Templates";
 import Settings from "./pages/Settings";
 import Account from "./pages/Account";
 import Blog from "./pages/Blog";
+import Marketplace from "./pages/Marketplace";
 import NotFound from "./pages/NotFound";
 import SignIn from "./pages/SignIn";
 import SignUp from "./pages/SignUp";
@@ -46,6 +47,7 @@ const App = () => (
             <Route path="/applications" element={<Applications />} />
             <Route path="/analytics" element={<Analytics />} />
             <Route path="/templates" element={<Templates />} />
+            <Route path="/marketplace" element={<Marketplace />} />
             <Route path="/settings" element={<Settings />} />
             <Route path="/account" element={<Account />} />
             
