@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Dialog,
   DialogContent,
@@ -13,7 +13,9 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { createEnhancedResume } from '@/services/resumeEnhancementService';
+import { Textarea } from "@/components/ui/textarea";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { createEnhancedResume, createEnhancedResumeFromExperience } from '@/services/resumeEnhancementService';
 import { toast } from 'sonner';
 import { 
   FileText, 
@@ -25,7 +27,8 @@ import {
   AlertCircle,
   User,
   Briefcase,
-  GraduationCap
+  GraduationCap,
+  PenTool
 } from 'lucide-react';
 
 export interface CreateResumeDialogProps {
@@ -49,9 +52,11 @@ export default function CreateResumeDialog({
 }: CreateResumeDialogProps) {
   const [linkedinUrl, setLinkedinUrl] = useState('');
   const [resumeName, setResumeName] = useState('');
+  const [workExperience, setWorkExperience] = useState('');
   const [isCreating, setIsCreating] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [currentStep, setCurrentStep] = useState(0);
+  const [useWorkExperience, setUseWorkExperience] = useState(false);
 
   const creationSteps: CreationStep[] = [
     {
@@ -86,9 +91,37 @@ export default function CreateResumeDialog({
 
   const [steps, setSteps] = useState(creationSteps);
 
+  // Load onboarding data if available
+  useEffect(() => {
+    if (open) {
+      const onboardingData = localStorage.getItem('onboardingData');
+      if (onboardingData) {
+        try {
+          const userData = JSON.parse(onboardingData);
+          if (userData.workExperience) {
+            setWorkExperience(userData.workExperience);
+            setUseWorkExperience(true);
+          }
+          if (userData.linkedinUrl) {
+            setLinkedinUrl(userData.linkedinUrl);
+          }
+          if (userData.profession) {
+            setResumeName(`${userData.profession} Resume`);
+          }
+          // Clear onboarding data after use
+          localStorage.removeItem('onboardingData');
+        } catch (error) {
+          console.error('Error parsing onboarding data:', error);
+        }
+      }
+    }
+  }, [open]);
+
   const resetForm = () => {
     setLinkedinUrl('');
     setResumeName('');
+    setWorkExperience('');
+    setUseWorkExperience(false);
     setError(null);
     setCurrentStep(0);
     setSteps(creationSteps);
@@ -115,14 +148,21 @@ export default function CreateResumeDialog({
   const handleCreate = async (event: React.FormEvent) => {
     event.preventDefault();
     
-    if (!linkedinUrl.trim()) {
-      setError('Please enter your LinkedIn profile URL');
-      return;
-    }
-
-    if (!validateLinkedInUrl(linkedinUrl)) {
-      setError('Please enter a valid LinkedIn profile URL (e.g., https://linkedin.com/in/yourname)');
-      return;
+    // Validate based on which method the user is using
+    if (useWorkExperience) {
+      if (!workExperience.trim()) {
+        setError('Please describe your work experience');
+        return;
+      }
+    } else {
+      if (!linkedinUrl.trim()) {
+        setError('Please enter your LinkedIn profile URL');
+        return;
+      }
+      if (!validateLinkedInUrl(linkedinUrl)) {
+        setError('Please enter a valid LinkedIn profile URL (e.g., https://linkedin.com/in/yourname)');
+        return;
+      }
     }
 
     setError(null);
@@ -132,26 +172,31 @@ export default function CreateResumeDialog({
     try {
       // Step 1: Validate
       updateStepStatus(0, 'processing');
-      await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate validation
+      await new Promise(resolve => setTimeout(resolve, 1000));
       updateStepStatus(0, 'completed');
       setCurrentStep(1);
 
-      // Step 2: Fetch LinkedIn data
+      // Step 2: Process data
       updateStepStatus(1, 'processing');
-      await new Promise(resolve => setTimeout(resolve, 1500)); // Simulate data fetching
+      await new Promise(resolve => setTimeout(resolve, 1500));
       updateStepStatus(1, 'completed');
       setCurrentStep(2);
 
       // Step 3: AI Enhancement
       updateStepStatus(2, 'processing');
-      await new Promise(resolve => setTimeout(resolve, 2000)); // Simulate AI processing
+      await new Promise(resolve => setTimeout(resolve, 2000));
       updateStepStatus(2, 'completed');
       setCurrentStep(3);
 
       // Step 4: Generate Resume
       updateStepStatus(3, 'processing');
       
-      await createEnhancedResume(linkedinUrl, resumeName || 'My Professional Resume');
+      // Use appropriate service based on input method
+      if (useWorkExperience) {
+        await createEnhancedResumeFromExperience(workExperience, resumeName || 'My Professional Resume');
+      } else {
+        await createEnhancedResume(linkedinUrl, resumeName || 'My Professional Resume');
+      }
       
       updateStepStatus(3, 'completed');
       
@@ -163,7 +208,6 @@ export default function CreateResumeDialog({
         await onResumeCreated();
       }
       
-      // Wait a moment to show completion before closing
       setTimeout(() => {
         handleOpenChange(false);
       }, 1000);
@@ -177,7 +221,7 @@ export default function CreateResumeDialog({
       
       setError(error.message || 'Failed to create resume. Please try again.');
       toast.error('Failed to create resume', {
-        description: error.message || 'Please check your LinkedIn URL and try again'
+        description: error.message || 'Please check your input and try again'
       });
     } finally {
       setIsCreating(false);
@@ -239,27 +283,58 @@ export default function CreateResumeDialog({
                     Give your resume a descriptive name for easy identification
                   </p>
                 </div>
-                
-                {/* LinkedIn URL Input */}
-                <div className="space-y-3">
-                  <Label htmlFor="linkedin" className="text-sm font-semibold text-foreground flex items-center gap-2">
-                    <div className="w-5 h-5 rounded-md bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center">
-                      <Linkedin className="h-3 w-3 text-blue-600 dark:text-blue-400" />
-                    </div>
-                    LinkedIn Profile URL
-                  </Label>
-                  <Input
-                    id="linkedin"
-                    placeholder="https://linkedin.com/in/yourname"
-                    value={linkedinUrl}
-                    onChange={(e) => setLinkedinUrl(e.target.value)}
-                    className="h-12 bg-background border-border focus:border-primary transition-all duration-200 text-base"
-                    required
-                  />
-                  <p className="text-xs text-muted-foreground leading-relaxed">
-                    Ensure your LinkedIn profile is public or accessible for the best results
-                  </p>
-                </div>
+
+                {/* Tabs for Input Method */}
+                <Tabs value={useWorkExperience ? "experience" : "linkedin"} onValueChange={(value) => setUseWorkExperience(value === "experience")} className="w-full">
+                  <TabsList className="grid w-full grid-cols-2 bg-muted/20">
+                    <TabsTrigger value="linkedin" className="flex items-center gap-2 data-[state=active]:bg-background">
+                      <Linkedin className="h-4 w-4" />
+                      LinkedIn URL
+                    </TabsTrigger>
+                    <TabsTrigger value="experience" className="flex items-center gap-2 data-[state=active]:bg-background">
+                      <PenTool className="h-4 w-4" />
+                      Describe Experience
+                    </TabsTrigger>
+                  </TabsList>
+                  
+                  <TabsContent value="linkedin" className="space-y-3 mt-6">
+                    <Label htmlFor="linkedin" className="text-sm font-semibold text-foreground flex items-center gap-2">
+                      <div className="w-5 h-5 rounded-md bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center">
+                        <Linkedin className="h-3 w-3 text-blue-600 dark:text-blue-400" />
+                      </div>
+                      LinkedIn Profile URL
+                    </Label>
+                    <Input
+                      id="linkedin"
+                      placeholder="https://linkedin.com/in/yourname"
+                      value={linkedinUrl}
+                      onChange={(e) => setLinkedinUrl(e.target.value)}
+                      className="h-12 bg-background border-border focus:border-primary transition-all duration-200 text-base"
+                    />
+                    <p className="text-xs text-muted-foreground leading-relaxed">
+                      Ensure your LinkedIn profile is public or accessible for the best results
+                    </p>
+                  </TabsContent>
+                  
+                  <TabsContent value="experience" className="space-y-3 mt-6">
+                    <Label htmlFor="experience" className="text-sm font-semibold text-foreground flex items-center gap-2">
+                      <div className="w-5 h-5 rounded-md bg-green-100 dark:bg-green-900/30 flex items-center justify-center">
+                        <PenTool className="h-3 w-3 text-green-600 dark:text-green-400" />
+                      </div>
+                      Work Experience Description
+                    </Label>
+                    <Textarea
+                      id="experience"
+                      placeholder="Describe your professional experience, key achievements, skills, and notable projects. Include specific examples of your work, technologies you've used, and impact you've made..."
+                      value={workExperience}
+                      onChange={(e) => setWorkExperience(e.target.value)}
+                      className="min-h-[120px] bg-background border-border focus:border-primary transition-all duration-200 text-base resize-none"
+                    />
+                    <p className="text-xs text-muted-foreground leading-relaxed">
+                      Provide a detailed description of your professional background. Our AI will use this to create compelling resume content.
+                    </p>
+                  </TabsContent>
+                </Tabs>
               </div>
 
               {/* Error Display */}

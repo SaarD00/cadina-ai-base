@@ -128,6 +128,68 @@ export const enhanceResumeWithAI = async (linkedinData: any, template: string = 
 };
 
 /**
+ * Creates an enhanced resume from work experience description
+ * @param workExperience The work experience description
+ * @param resumeTitle The title of the resume
+ * @returns The created resume
+ */
+export const createEnhancedResumeFromExperience = async (workExperience: string, resumeTitle?: string) => {
+  try {
+    // Get the current user
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) throw new Error('Authentication required to create a resume');
+    
+    const userId = user.id;
+    
+    // Transform work experience into LinkedIn-like structure for the AI
+    const mockLinkedInData = {
+      basicInfo: {
+        name: "User",
+        title: "Professional",
+        description: workExperience
+      },
+      experience: [{
+        title: "Professional Experience",
+        company: "Various Companies",
+        description: workExperience,
+        duration: "Recent"
+      }]
+    };
+
+    // Transform and enhance the data
+    const enhancedResume = await enhanceResumeWithAI(mockLinkedInData);
+    
+    // Create the resume in the database with the enhanced content
+    const { data: resume, error } = await supabase
+      .from('resumes')
+      .insert({
+        title: resumeTitle || 'My Professional Resume',
+        content: JSON.stringify(enhancedResume),
+        template: 'modern',
+        user_id: userId,
+        settings: {
+          fontFamily: "Inter",
+          fontSize: 10,
+          primaryColor: "#9b87f5",
+          secondaryColor: "#6E59A5",
+          accentColor: "#D6BCFA",
+          paperSize: "a4",
+          margins: "normal"
+        }
+      })
+      .select()
+      .single();
+      
+    if (error) throw error;
+    
+    return resume;
+  } catch (error) {
+    console.error('Error creating enhanced resume from experience:', error);
+    throw error;
+  }
+};
+
+/**
  * Creates an enhanced resume in the database
  * @param linkedinUrl The LinkedIn URL to fetch data from
  * @param resumeTitle The title of the resume

@@ -2,71 +2,101 @@
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { FileText, User, Briefcase, Zap, ArrowRight, Check, Sparkles, Brain, Target, Wand2, Eye, Download } from 'lucide-react';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
+import { Badge } from '@/components/ui/badge';
+import { FileText, User, Briefcase, Zap, ArrowRight, Check, Sparkles, Brain, Target, Wand2, Eye, Download, Heart, Globe, Linkedin, PenTool, Rocket } from 'lucide-react';
 import { Progress } from '@/components/ui/progress';
 
 interface OnboardingFlowProps {
-  onComplete: () => void;
+  onComplete: (userData?: OnboardingData) => void;
+}
+
+interface OnboardingData {
+  profession: string;
+  workExperience: string;
+  linkedinUrl?: string;
+  careerGoals: string;
 }
 
 const OnboardingFlow: React.FC<OnboardingFlowProps> = ({ onComplete }) => {
   const [step, setStep] = useState(0);
   const [animation, setAnimation] = useState('animate-scale-up');
+  
+  // User data state
+  const [userData, setUserData] = useState<OnboardingData>({
+    profession: '',
+    workExperience: '',
+    linkedinUrl: '',
+    careerGoals: ''
+  });
 
   const steps = [
     {
-      title: "Welcome to ResumeAI",
-      subtitle: "Your AI-Powered Resume Builder",
+      title: "Welcome to Vireia AI! 🎉",
+      subtitle: "Your AI-Powered Career Companion",
+      icon: Heart,
+      type: "welcome",
+      description: "We're thrilled to have you here! Vireia AI is designed to empower your career journey with intelligent resume building and optimization.",
+      features: [
+        { icon: Brain, text: "Smart AI content generation" },
+        { icon: Target, text: "ATS optimization guaranteed" },
+        { icon: Sparkles, text: "Professional polish in minutes" }
+      ],
+      gradient: "from-primary via-primary/80 to-accent"
+    },
+    {
+      title: "Tell us about yourself",
+      subtitle: "Help us understand your professional background",
+      icon: User,
+      type: "profession",
+      description: "What's your current profession or what role are you aspiring to achieve? This helps us tailor the perfect resume for you.",
+      gradient: "from-blue-500 via-primary to-primary/80"
+    },
+    {
+      title: "Your career aspirations",
+      subtitle: "Where do you see yourself going?",
+      icon: Rocket,
+      type: "goals",
+      description: "Understanding your career goals helps our AI craft targeted content that aligns with your professional ambitions.",
+      gradient: "from-green-500 via-teal-500 to-primary"
+    },
+    {
+      title: "Share your experience",
+      subtitle: "Tell us about your professional journey",
+      icon: Briefcase,
+      type: "experience",
+      description: "Describe your work experience or share your LinkedIn profile. Our AI will transform this into compelling resume content.",
+      gradient: "from-purple-500 via-primary to-primary/80"
+    },
+    {
+      title: "You're all set! 🚀",
+      subtitle: "Let's create something amazing together",
       icon: Sparkles,
-      description: "Create stunning, ATS-optimized resumes that get you hired. Let our AI guide you through the process.",
+      type: "complete",
+      description: "Perfect! We have everything we need to help you create an outstanding resume. Your success story starts now!",
       features: [
-        { icon: Brain, text: "AI-powered content generation" },
-        { icon: Target, text: "ATS optimization built-in" },
-        { icon: Eye, text: "Professional templates" }
+        { icon: Wand2, text: "AI will enhance your content" },
+        { icon: Target, text: "Optimized for applicant tracking systems" },
+        { icon: Eye, text: "Multiple professional templates" }
       ],
-      gradient: "from-resume-purple via-resume-violet to-purple-600"
-    },
-    {
-      title: "AI-Powered Writing Assistant",
-      subtitle: "Let AI craft your perfect resume",
-      icon: Wand2,
-      description: "Our intelligent assistant helps you write compelling job descriptions, optimize keywords, and tailor content for specific roles.",
-      features: [
-        { icon: FileText, text: "Auto-generate job descriptions" },
-        { icon: Target, text: "Keyword optimization" },
-        { icon: Sparkles, text: "Industry-specific suggestions" }
-      ],
-      gradient: "from-blue-500 via-resume-purple to-resume-violet",
-      preview: "AI_WRITING"
-    },
-    {
-      title: "Professional Templates",
-      subtitle: "Choose from stunning designs",
-      icon: Eye,
-      description: "Select from our collection of modern, professional templates designed to make you stand out to employers.",
-      features: [
-        { icon: FileText, text: "Multiple template styles" },
-        { icon: User, text: "Customizable layouts" },
-        { icon: Download, text: "Export to PDF instantly" }
-      ],
-      gradient: "from-green-500 via-teal-500 to-resume-purple",
-      preview: "TEMPLATES"
-    },
-    {
-      title: "You're Ready to Build!",
-      subtitle: "Start creating your perfect resume",
-      icon: Zap,
-      description: "Everything is set up! Begin crafting your professional resume with AI assistance and watch your career prospects soar.",
-      features: [
-        { icon: Sparkles, text: "AI guidance every step" },
-        { icon: Target, text: "ATS-friendly formatting" },
-        { icon: Check, text: "Export when ready" }
-      ],
-      gradient: "from-resume-purple via-resume-violet to-pink-500"
+      gradient: "from-primary via-accent to-secondary"
     }
   ];
 
   const nextStep = () => {
+    // Validate current step before proceeding
+    if (currentStep.type === 'profession' && !userData.profession.trim()) {
+      return; // Don't proceed if profession is empty
+    }
+    if (currentStep.type === 'goals' && !userData.careerGoals.trim()) {
+      return; // Don't proceed if career goals are empty
+    }
+    if (currentStep.type === 'experience' && !userData.workExperience.trim() && !userData.linkedinUrl?.trim()) {
+      return; // Don't proceed if both experience and LinkedIn are empty
+    }
+    
     if (step < steps.length - 1) {
       setAnimation('animate-fade-out');
       setTimeout(() => {
@@ -74,61 +104,132 @@ const OnboardingFlow: React.FC<OnboardingFlowProps> = ({ onComplete }) => {
         setAnimation('animate-scale-up');
       }, 300);
     } else {
-      onComplete();
+      onComplete(userData);
     }
+  };
+
+  const updateUserData = (field: keyof OnboardingData, value: string) => {
+    setUserData(prev => ({ ...prev, [field]: value }));
+  };
+
+  const canProceed = () => {
+    const currentStepType = currentStep.type;
+    if (currentStepType === 'profession') return userData.profession.trim().length > 0;
+    if (currentStepType === 'goals') return userData.careerGoals.trim().length > 0;
+    if (currentStepType === 'experience') return userData.workExperience.trim().length > 0 || userData.linkedinUrl?.trim().length > 0;
+    return true;
   };
 
   const progress = ((step + 1) / steps.length) * 100;
   const currentStep = steps[step];
 
-  const renderPreview = (previewType: string) => {
-    if (previewType === "AI_WRITING") {
-      return (
-        <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4 border border-white/20">
-          <div className="text-xs text-white/80 mb-2">AI Assistant</div>
-          <div className="bg-white/20 rounded p-3 text-sm text-white">
-            <div className="flex items-center gap-2 mb-2">
-              <Brain className="w-4 h-4 text-yellow-300" />
-              <span className="text-yellow-300">Generating content...</span>
-            </div>
-            <div className="text-white/90 italic">
-              "Led a cross-functional team of 8 developers to deliver a high-impact e-commerce platform, resulting in 40% increase in user engagement..."
+  const renderStepContent = () => {
+    switch (currentStep.type) {
+      case 'profession':
+        return (
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="profession" className="text-sm font-medium text-foreground flex items-center gap-2">
+                <div className="w-5 h-5 rounded-md bg-primary/10 flex items-center justify-center">
+                  <User className="h-3 w-3 text-primary" />
+                </div>
+                Current or Target Role
+              </Label>
+              <Input
+                id="profession"
+                placeholder="e.g., Software Engineer, Marketing Manager, Data Scientist..."
+                value={userData.profession}
+                onChange={(e) => updateUserData('profession', e.target.value)}
+                className="h-12 text-base"
+                autoFocus
+              />
+              <p className="text-xs text-muted-foreground">
+                This helps us understand your career focus and tailor content accordingly
+              </p>
             </div>
           </div>
-        </div>
-      );
-    }
-
-    if (previewType === "TEMPLATES") {
-      return (
-        <div className="grid grid-cols-2 gap-2">
-          <div className="bg-white/10 backdrop-blur-sm rounded border border-white/20 p-2 aspect-[3/4]">
-            <div className="h-full bg-gradient-to-b from-white/20 to-white/5 rounded flex flex-col">
-              <div className="h-2 bg-white/30 rounded mb-1"></div>
-              <div className="h-1 bg-white/20 rounded mb-2"></div>
-              <div className="space-y-1 flex-1">
-                <div className="h-1 bg-white/15 rounded w-3/4"></div>
-                <div className="h-1 bg-white/15 rounded w-1/2"></div>
-                <div className="h-1 bg-white/15 rounded w-2/3"></div>
+        );
+      
+      case 'goals':
+        return (
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="goals" className="text-sm font-medium text-foreground flex items-center gap-2">
+                <div className="w-5 h-5 rounded-md bg-green-100 dark:bg-green-900/30 flex items-center justify-center">
+                  <Rocket className="h-3 w-3 text-green-600 dark:text-green-400" />
+                </div>
+                Career Aspirations
+              </Label>
+              <Textarea
+                id="goals"
+                placeholder="e.g., I want to become a senior developer, transition into product management, or advance to a leadership role..."
+                value={userData.careerGoals}
+                onChange={(e) => updateUserData('careerGoals', e.target.value)}
+                className="min-h-[100px] text-base resize-none"
+                autoFocus
+              />
+              <p className="text-xs text-muted-foreground">
+                Tell us about your professional ambitions and where you'd like to grow
+              </p>
+            </div>
+          </div>
+        );
+      
+      case 'experience':
+        return (
+          <div className="space-y-6">
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="experience" className="text-sm font-medium text-foreground flex items-center gap-2">
+                  <div className="w-5 h-5 rounded-md bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center">
+                    <Briefcase className="h-3 w-3 text-purple-600 dark:text-purple-400" />
+                  </div>
+                  Work Experience
+                </Label>
+                <Textarea
+                  id="experience"
+                  placeholder="Describe your professional experience, key achievements, skills, and notable projects in a few sentences..."
+                  value={userData.workExperience}
+                  onChange={(e) => updateUserData('workExperience', e.target.value)}
+                  className="min-h-[120px] text-base resize-none"
+                  autoFocus
+                />
+              </div>
+              
+              <div className="relative">
+                <div className="absolute inset-0 flex items-center">
+                  <span className="w-full border-t border-border" />
+                </div>
+                <div className="relative flex justify-center text-xs uppercase">
+                  <span className="bg-background px-2 text-muted-foreground">or</span>
+                </div>
+              </div>
+              
+              <div className="space-y-2">
+                <Label htmlFor="linkedin" className="text-sm font-medium text-foreground flex items-center gap-2">
+                  <div className="w-5 h-5 rounded-md bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center">
+                    <Linkedin className="h-3 w-3 text-blue-600 dark:text-blue-400" />
+                  </div>
+                  LinkedIn Profile URL (Alternative)
+                </Label>
+                <Input
+                  id="linkedin"
+                  placeholder="https://linkedin.com/in/yourname"
+                  value={userData.linkedinUrl || ''}
+                  onChange={(e) => updateUserData('linkedinUrl', e.target.value)}
+                  className="h-12 text-base"
+                />
+                <p className="text-xs text-muted-foreground">
+                  Provide either your experience description above or your LinkedIn URL - whichever is easier for you
+                </p>
               </div>
             </div>
           </div>
-          <div className="bg-white/10 backdrop-blur-sm rounded border border-white/20 p-2 aspect-[3/4]">
-            <div className="h-full bg-gradient-to-b from-white/20 to-white/5 rounded flex flex-col">
-              <div className="h-2 bg-white/30 rounded mb-1"></div>
-              <div className="h-1 bg-white/20 rounded mb-2"></div>
-              <div className="space-y-1 flex-1">
-                <div className="h-1 bg-white/15 rounded w-2/3"></div>
-                <div className="h-1 bg-white/15 rounded w-3/4"></div>
-                <div className="h-1 bg-white/15 rounded w-1/2"></div>
-              </div>
-            </div>
-          </div>
-        </div>
-      );
+        );
+      
+      default:
+        return null;
     }
-
-    return null;
   };
 
   return (
@@ -161,46 +262,41 @@ const OnboardingFlow: React.FC<OnboardingFlowProps> = ({ onComplete }) => {
         </div>
 
         <CardContent className="p-6 space-y-6">
-          <p className="text-resume-gray text-center text-lg leading-relaxed">
+          <p className="text-muted-foreground text-center text-lg leading-relaxed">
             {currentStep.description}
           </p>
 
-          {/* Features Grid */}
-          <div className="grid grid-cols-1 gap-3">
-            {currentStep.features.map((feature, index) => (
-              <div 
-                key={index} 
-                className="flex items-center gap-3 p-3 rounded-lg bg-resume-purple/5 border border-resume-purple/10 hover:bg-resume-purple/10 transition-colors"
-              >
-                <div className="w-8 h-8 rounded-full bg-resume-purple/20 flex items-center justify-center flex-shrink-0">
-                  <feature.icon className="w-4 h-4 text-resume-purple" />
+          {/* Features Grid for welcome and complete steps */}
+          {currentStep.features && (
+            <div className="grid grid-cols-1 gap-3">
+              {currentStep.features.map((feature, index) => (
+                <div 
+                  key={index} 
+                  className="flex items-center gap-3 p-3 rounded-lg bg-primary/5 border border-primary/10 hover:bg-primary/10 transition-colors"
+                >
+                  <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0">
+                    <feature.icon className="w-4 h-4 text-primary" />
+                  </div>
+                  <span className="text-foreground font-medium">{feature.text}</span>
                 </div>
-                <span className="text-resume-gray font-medium">{feature.text}</span>
-              </div>
-            ))}
-          </div>
-
-          {/* Preview Section */}
-          {currentStep.preview && (
-            <div className="mt-6">
-              <div className="text-sm font-medium text-resume-gray mb-3 text-center">Preview</div>
-              <div className={`bg-gradient-to-r ${currentStep.gradient} p-4 rounded-lg`}>
-                {renderPreview(currentStep.preview)}
-              </div>
+              ))}
             </div>
           )}
 
+          {/* Step-specific content */}
+          {renderStepContent()}
+
           {/* Progress Dots */}
-          <div className="flex justify-center gap-2 pt-2">
+          <div className="flex justify-center gap-2 pt-4">
             {steps.map((_, index) => (
               <div
                 key={index}
                 className={`w-2.5 h-2.5 rounded-full transition-all duration-300 ${
                   index === step 
-                    ? 'bg-resume-purple scale-125' 
+                    ? 'bg-primary scale-125' 
                     : index < step
-                    ? 'bg-resume-purple/60'
-                    : 'bg-gray-200'
+                    ? 'bg-primary/60'
+                    : 'bg-muted'
                 }`}
               />
             ))}
@@ -210,7 +306,8 @@ const OnboardingFlow: React.FC<OnboardingFlowProps> = ({ onComplete }) => {
         <CardFooter className="p-6 pt-0">
           <Button 
             onClick={nextStep}
-            className="w-full bg-resume-purple hover:bg-resume-purple-dark text-white shadow-lg shadow-resume-purple/20 transition-all duration-300 group h-12 text-lg font-medium"
+            disabled={!canProceed()}
+            className="w-full bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 text-primary-foreground shadow-lg shadow-primary/20 transition-all duration-300 group h-12 text-lg font-medium disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {step < steps.length - 1 ? (
               <>
