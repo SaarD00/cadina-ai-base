@@ -243,32 +243,36 @@ export default function CreateResumeDialog({
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
-      <DialogContent className="sm:max-w-[650px] p-0 overflow-hidden bg-background border-none shadow-2xl">
-        {/* Header with gradient background */}
-        <div className="relative bg-gradient-to-br from-primary/10 via-primary/5 to-accent/10 p-8 border-b border-border/50">
+      <DialogContent className="sm:max-w-[700px] p-0 overflow-hidden bg-gradient-to-b from-background to-muted/30 border-0 shadow-2xl">
+        {/* Enhanced Header with gradient background */}
+        <div className="relative bg-gradient-to-br from-primary/15 via-primary/10 to-accent/15 p-10 border-b border-border/30">
           <div className="absolute inset-0 bg-grid-pattern opacity-20"></div>
+          {/* Decorative elements */}
+          <div className="absolute top-0 right-0 w-32 h-32 bg-primary/10 rounded-full -translate-y-16 translate-x-16 animate-pulse"></div>
+          <div className="absolute bottom-0 left-0 w-24 h-24 bg-accent/10 rounded-full translate-y-12 -translate-x-12 animate-pulse delay-300"></div>
+          
           <DialogHeader className="relative">
-            <DialogTitle className="text-3xl font-bold text-foreground flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-primary/20 flex items-center justify-center">
-                <Sparkles className="h-5 w-5 text-primary" />
+            <DialogTitle className="text-4xl font-bold text-foreground flex items-center gap-4 mb-4">
+              <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-primary/20 to-primary/30 flex items-center justify-center shadow-lg">
+                <Sparkles className="h-6 w-6 text-primary drop-shadow-sm" />
               </div>
               Create AI-Enhanced Resume
             </DialogTitle>
-            <DialogDescription className="text-muted-foreground text-base mt-3 leading-relaxed">
-              Transform your LinkedIn profile into a professional, ATS-optimized resume using advanced AI technology
+            <DialogDescription className="text-muted-foreground text-lg mt-4 leading-relaxed font-medium">
+              Transform your professional experience into an ATS-optimized resume using cutting-edge AI technology
             </DialogDescription>
           </DialogHeader>
         </div>
 
-        <div className="p-8 space-y-8">
+        <div className="p-10 space-y-10">
           {!isCreating ? (
-            <form onSubmit={handleCreate} className="space-y-8">
-              <div className="space-y-6">
-                {/* Resume Name Input */}
-                <div className="space-y-3">
-                  <Label htmlFor="name" className="text-sm font-semibold text-foreground flex items-center gap-2">
-                    <div className="w-5 h-5 rounded-md bg-primary/10 flex items-center justify-center">
-                      <FileText className="h-3 w-3 text-primary" />
+            <form onSubmit={handleCreate} className="space-y-10">
+              <div className="space-y-8">
+                {/* Enhanced Resume Name Input */}
+                <div className="space-y-4">
+                  <Label htmlFor="name" className="text-base font-semibold text-foreground flex items-center gap-3">
+                    <div className="w-6 h-6 rounded-lg bg-primary/15 flex items-center justify-center">
+                      <FileText className="h-3.5 w-3.5 text-primary" />
                     </div>
                     Resume Name
                   </Label>
@@ -277,30 +281,30 @@ export default function CreateResumeDialog({
                     placeholder="e.g., Senior Software Engineer Resume"
                     value={resumeName}
                     onChange={(e) => setResumeName(e.target.value)}
-                    className="h-12 bg-background border-border focus:border-primary transition-all duration-200 text-base"
+                    className="h-14 bg-background/80 backdrop-blur-sm border-2 border-border/50 focus:border-primary/50 transition-all duration-300 text-lg rounded-xl"
                   />
-                  <p className="text-xs text-muted-foreground leading-relaxed">
+                  <p className="text-sm text-muted-foreground leading-relaxed">
                     Give your resume a descriptive name for easy identification
                   </p>
                 </div>
 
-                {/* Tabs for Input Method */}
+                {/* Enhanced Tabs for Input Method */}
                 <Tabs value={useWorkExperience ? "experience" : "linkedin"} onValueChange={(value) => setUseWorkExperience(value === "experience")} className="w-full">
-                  <TabsList className="grid w-full grid-cols-2 bg-muted/20">
-                    <TabsTrigger value="linkedin" className="flex items-center gap-2 data-[state=active]:bg-background">
-                      <Linkedin className="h-4 w-4" />
+                  <TabsList className="grid w-full grid-cols-2 bg-muted/30 p-1 rounded-xl h-14">
+                    <TabsTrigger value="linkedin" className="flex items-center gap-3 data-[state=active]:bg-background data-[state=active]:shadow-md text-base font-medium h-12 rounded-lg">
+                      <Linkedin className="h-5 w-5" />
                       LinkedIn URL
                     </TabsTrigger>
-                    <TabsTrigger value="experience" className="flex items-center gap-2 data-[state=active]:bg-background">
-                      <PenTool className="h-4 w-4" />
+                    <TabsTrigger value="experience" className="flex items-center gap-3 data-[state=active]:bg-background data-[state=active]:shadow-md text-base font-medium h-12 rounded-lg">
+                      <PenTool className="h-5 w-5" />
                       Describe Experience
                     </TabsTrigger>
                   </TabsList>
                   
-                  <TabsContent value="linkedin" className="space-y-3 mt-6">
-                    <Label htmlFor="linkedin" className="text-sm font-semibold text-foreground flex items-center gap-2">
-                      <div className="w-5 h-5 rounded-md bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center">
-                        <Linkedin className="h-3 w-3 text-blue-600 dark:text-blue-400" />
+                  <TabsContent value="linkedin" className="space-y-4 mt-8">
+                    <Label htmlFor="linkedin" className="text-base font-semibold text-foreground flex items-center gap-3">
+                      <div className="w-6 h-6 rounded-lg bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center">
+                        <Linkedin className="h-3.5 w-3.5 text-blue-600 dark:text-blue-400" />
                       </div>
                       LinkedIn Profile URL
                     </Label>
@@ -309,17 +313,17 @@ export default function CreateResumeDialog({
                       placeholder="https://linkedin.com/in/yourname"
                       value={linkedinUrl}
                       onChange={(e) => setLinkedinUrl(e.target.value)}
-                      className="h-12 bg-background border-border focus:border-primary transition-all duration-200 text-base"
+                      className="h-14 bg-background/80 backdrop-blur-sm border-2 border-border/50 focus:border-primary/50 transition-all duration-300 text-lg rounded-xl"
                     />
-                    <p className="text-xs text-muted-foreground leading-relaxed">
+                    <p className="text-sm text-muted-foreground leading-relaxed">
                       Ensure your LinkedIn profile is public or accessible for the best results
                     </p>
                   </TabsContent>
                   
-                  <TabsContent value="experience" className="space-y-3 mt-6">
-                    <Label htmlFor="experience" className="text-sm font-semibold text-foreground flex items-center gap-2">
-                      <div className="w-5 h-5 rounded-md bg-green-100 dark:bg-green-900/30 flex items-center justify-center">
-                        <PenTool className="h-3 w-3 text-green-600 dark:text-green-400" />
+                  <TabsContent value="experience" className="space-y-4 mt-8">
+                    <Label htmlFor="experience" className="text-base font-semibold text-foreground flex items-center gap-3">
+                      <div className="w-6 h-6 rounded-lg bg-green-100 dark:bg-green-900/30 flex items-center justify-center">
+                        <PenTool className="h-3.5 w-3.5 text-green-600 dark:text-green-400" />
                       </div>
                       Work Experience Description
                     </Label>
@@ -328,9 +332,9 @@ export default function CreateResumeDialog({
                       placeholder="Describe your professional experience, key achievements, skills, and notable projects. Include specific examples of your work, technologies you've used, and impact you've made..."
                       value={workExperience}
                       onChange={(e) => setWorkExperience(e.target.value)}
-                      className="min-h-[120px] bg-background border-border focus:border-primary transition-all duration-200 text-base resize-none"
+                      className="min-h-[140px] bg-background/80 backdrop-blur-sm border-2 border-border/50 focus:border-primary/50 transition-all duration-300 text-lg resize-none rounded-xl"
                     />
-                    <p className="text-xs text-muted-foreground leading-relaxed">
+                    <p className="text-sm text-muted-foreground leading-relaxed">
                       Provide a detailed description of your professional background. Our AI will use this to create compelling resume content.
                     </p>
                   </TabsContent>
@@ -347,49 +351,49 @@ export default function CreateResumeDialog({
                 </div>
               )}
 
-              {/* Feature Preview Card */}
-              <Card className="border-primary/20 bg-gradient-to-br from-primary/5 to-accent/5">
-                <div className="p-6">
-                  <h4 className="font-semibold text-foreground mb-4 flex items-center gap-2">
-                    <div className="w-6 h-6 rounded-lg bg-primary/20 flex items-center justify-center">
-                      <Sparkles className="h-3.5 w-3.5 text-primary" />
+              {/* Enhanced Feature Preview Card */}
+              <Card className="border-primary/30 bg-gradient-to-br from-primary/8 to-accent/8 shadow-lg">
+                <div className="p-8">
+                  <h4 className="font-bold text-foreground mb-6 flex items-center gap-3 text-lg">
+                    <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-primary/20 to-primary/30 flex items-center justify-center">
+                      <Sparkles className="h-4 w-4 text-primary" />
                     </div>
                     What happens next?
                   </h4>
-                  <div className="grid grid-cols-2 gap-4 text-sm">
+                  <div className="grid grid-cols-2 gap-6 text-base">
                     <div className="flex items-start gap-3">
-                      <div className="w-2 h-2 bg-primary rounded-full mt-2 flex-shrink-0"></div>
-                      <span className="text-muted-foreground leading-relaxed">Extract professional experience and skills</span>
+                      <div className="w-3 h-3 bg-primary rounded-full mt-2 flex-shrink-0 shadow-sm"></div>
+                      <span className="text-muted-foreground leading-relaxed font-medium">Extract professional experience and skills</span>
                     </div>
                     <div className="flex items-start gap-3">
-                      <div className="w-2 h-2 bg-primary rounded-full mt-2 flex-shrink-0"></div>
-                      <span className="text-muted-foreground leading-relaxed">Enhance descriptions with AI impact</span>
+                      <div className="w-3 h-3 bg-primary rounded-full mt-2 flex-shrink-0 shadow-sm"></div>
+                      <span className="text-muted-foreground leading-relaxed font-medium">Enhance descriptions with AI impact</span>
                     </div>
                     <div className="flex items-start gap-3">
-                      <div className="w-2 h-2 bg-primary rounded-full mt-2 flex-shrink-0"></div>
-                      <span className="text-muted-foreground leading-relaxed">Generate ATS-friendly formatting</span>
+                      <div className="w-3 h-3 bg-primary rounded-full mt-2 flex-shrink-0 shadow-sm"></div>
+                      <span className="text-muted-foreground leading-relaxed font-medium">Generate ATS-friendly formatting</span>
                     </div>
                     <div className="flex items-start gap-3">
-                      <div className="w-2 h-2 bg-primary rounded-full mt-2 flex-shrink-0"></div>
-                      <span className="text-muted-foreground leading-relaxed">Create multiple template options</span>
+                      <div className="w-3 h-3 bg-primary rounded-full mt-2 flex-shrink-0 shadow-sm"></div>
+                      <span className="text-muted-foreground leading-relaxed font-medium">Create multiple template options</span>
                     </div>
                   </div>
                 </div>
               </Card>
 
-              {/* CTA Button */}
+              {/* Enhanced CTA Button */}
               <DialogFooter>
                 <Button 
                   type="submit" 
                   disabled={isCreating}
-                  className="w-full h-14 bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 text-primary-foreground font-semibold text-base rounded-xl transition-all duration-300 shadow-lg hover:shadow-primary/25 group"
+                  className="w-full h-16 bg-gradient-to-r from-primary via-primary to-accent hover:from-primary/90 hover:via-primary/95 hover:to-accent/90 text-primary-foreground font-bold text-lg rounded-xl transition-all duration-500 shadow-xl hover:shadow-primary/30 group border border-primary/20"
                 >
-                  <div className="flex items-center gap-3">
-                    <div className="w-5 h-5 rounded-md bg-primary-foreground/20 flex items-center justify-center">
-                      <Sparkles className="h-3 w-3" />
+                  <div className="flex items-center gap-4">
+                    <div className="w-6 h-6 rounded-lg bg-primary-foreground/20 flex items-center justify-center">
+                      <Sparkles className="h-4 w-4" />
                     </div>
                     Create AI Resume
-                    <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
+                    <ArrowRight className="h-5 w-5 group-hover:translate-x-2 transition-all duration-300" />
                   </div>
                 </Button>
               </DialogFooter>

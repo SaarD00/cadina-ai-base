@@ -1,5 +1,4 @@
-
-import React, { useMemo } from 'react';
+import React, { useMemo, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { useResumeData } from '@/hooks/use-resume-data';
 import { Project, SegmentStyles, Experience, Education } from '@/types/resume';
@@ -8,8 +7,33 @@ const ResumePDF = () => {
   const { resumeId } = useParams();
   const { resumeData, isLoading, resumeSettings } = useResumeData(resumeId);
 
+  // Add print-specific CSS when component mounts
+  useEffect(() => {
+    const style = document.createElement('style');
+    style.textContent = `
+      @media print {
+        body { margin: 0; }
+        @page { 
+          margin: 0.5in;
+          size: A4;
+        }
+        .print-break { page-break-before: always; }
+        .no-print { display: none !important; }
+      }
+    `;
+    document.head.appendChild(style);
+    
+    return () => {
+      document.head.removeChild(style);
+    };
+  }, []);
+
   if (isLoading) {
-    return <div className="flex items-center justify-center h-screen">Loading...</div>;
+    return (
+      <div className="flex items-center justify-center h-screen bg-white">
+        <div className="text-lg text-gray-600">Loading resume...</div>
+      </div>
+    );
   }
 
   const formatBulletPoints = (text: string, limit?: number) => {
@@ -181,7 +205,7 @@ const ResumePDF = () => {
       )}
 
       {/* Experience */}
-      {resumeData.experience.length > 0 && (
+      {resumeData.experience && resumeData.experience.length > 0 && (
         <div className="mb-4">
           <h2 className="text-sm font-semibold text-gray-800 mb-1 border-b border-gray-200 pb-0.5 uppercase tracking-wide"
               style={getSectionTitleStyles('experience')}>
@@ -258,7 +282,7 @@ const ResumePDF = () => {
       )}
 
       {/* Education */}
-      {resumeData.education.length > 0 && (
+      {resumeData.education && resumeData.education.length > 0 && (
         <div className="mb-4">
           <h2 className="text-sm font-semibold text-gray-800 mb-1 border-b border-gray-200 pb-0.5 uppercase tracking-wide"
               style={getSectionTitleStyles('education')}>
@@ -345,7 +369,30 @@ const ResumePDF = () => {
         </div>
       )}
       
-      {/* Rest of sections... */}
+      {/* Experience Section */}
+      {resumeData.experience && resumeData.experience.length > 0 && (
+        <div>
+          <h2 className="text-lg font-bold mb-3 text-gray-800">Professional Experience</h2>
+          {resumeData.experience.map((exp: Experience, index) => (
+            <div key={index} className="mb-4">
+              <div className="flex justify-between items-start">
+                <div>
+                  <h3 className="font-semibold text-gray-800">{exp.title}</h3>
+                  <p className="text-gray-600">{exp.company}, {exp.location}</p>
+                </div>
+                <span className="text-gray-500 text-sm">{exp.startDate} - {exp.endDate}</span>
+              </div>
+              <ul className="list-disc pl-6 mt-2 text-gray-700">
+                {formatBulletPoints(exp.description).map((point, i) => (
+                  <li key={i}>{point}</li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </div>
+      )}
+      
+      {/* Rest of sections follow similar pattern */}
     </div>
   );
 
@@ -363,20 +410,22 @@ const ResumePDF = () => {
   );
 
   return (
-    <div 
-      className="w-full mx-auto bg-white print:p-0 shadow-lg print:shadow-none"
-      style={{
-        fontFamily: resumeSettings?.fontFamily || 'Inter',
-        fontSize: `${resumeSettings?.fontSize || 10}pt`,
-        lineHeight: "1.4",
-        printColorAdjust: "exact",
-        minHeight: calculateContentHeight.isMultiPage ? `${calculateContentHeight.height}px` : "100vh",
-        maxWidth: "210mm", // A4 width
-        padding: "20mm", // A4 margins
-        margin: "0 auto"
-      }}
-    >
-      {renderTemplateContent()}
+    <div className="min-h-screen bg-white print:bg-white">
+      <div 
+        className="w-full mx-auto bg-white print:shadow-none"
+        style={{
+          fontFamily: resumeSettings?.fontFamily || 'Inter',
+          fontSize: `${resumeSettings?.fontSize || 10}pt`,
+          lineHeight: "1.4",
+          printColorAdjust: "exact",
+          minHeight: calculateContentHeight.isMultiPage ? `${calculateContentHeight.height}px` : "100vh",
+          maxWidth: "210mm", // A4 width
+          padding: "20mm", // A4 margins
+          margin: "0 auto"
+        }}
+      >
+        {renderTemplateContent()}
+      </div>
     </div>
   );
 };

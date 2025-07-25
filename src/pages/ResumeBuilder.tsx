@@ -366,7 +366,17 @@ const ResumeBuilder = () => {
         aiEnabled={aiEnabled}
         onSave={handleSave}
         onAIToggle={handleAIToggle}
-        onDownload={() => { }}
+        onDownload={() => {
+          if (resumeId) {
+            const pdfWindow = window.open(`/resume/pdf/${resumeId}`, '_blank');
+            if (pdfWindow) {
+              setTimeout(() => {
+                pdfWindow.focus();
+                pdfWindow.print();
+              }, 1500);
+            }
+          }
+        }}
         onShare={() => { }}
       />
 

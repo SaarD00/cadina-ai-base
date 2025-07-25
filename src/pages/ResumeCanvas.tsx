@@ -124,8 +124,17 @@ const ResumeCanvas = () => {
   const handleDownload = async () => {
     try {
       toast.success("Preparing your resume for download...");
-      // In a real implementation, we would generate and download a PDF
-      window.open(`/resume/pdf/${resumeId}`, '_blank');
+      
+      // Open the ResumePDF page in a new window for PDF generation
+      const pdfWindow = window.open(`/resume/pdf/${resumeId}`, '_blank');
+      
+      if (pdfWindow) {
+        // Wait for the page to load and then trigger print
+        setTimeout(() => {
+          pdfWindow.focus();
+          pdfWindow.print();
+        }, 1500);
+      }
     } catch (error) {
       console.error('Error downloading resume:', error);
       toast.error('Failed to download resume');
