@@ -329,13 +329,13 @@ export default function CreateResumeDialog({
                     </Label>
                     <Textarea
                       id="experience"
-                      placeholder="Describe your professional experience, key achievements, skills, and notable projects. Include specific examples of your work, technologies you've used, and impact you've made..."
+                      placeholder="Copy and paste your entire LinkedIn profile page here. Our AI will intelligently extract all essential information including your experience, projects, education, contact details, skills, and more to create your resume..."
                       value={workExperience}
                       onChange={(e) => setWorkExperience(e.target.value)}
                       className="min-h-[140px] bg-background/80 backdrop-blur-sm border-2 border-border/50 focus:border-primary/50 transition-all duration-300 text-lg resize-none rounded-xl"
                     />
                     <p className="text-sm text-muted-foreground leading-relaxed">
-                      Provide a detailed description of your professional background. Our AI will use this to create compelling resume content.
+                      Simply copy your entire LinkedIn profile page and paste it here. Our AI will automatically extract all relevant information including work experience, education, projects, skills, contact details, and other essential resume data.
                     </p>
                   </TabsContent>
                 </Tabs>
