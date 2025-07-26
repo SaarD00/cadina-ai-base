@@ -86,6 +86,14 @@ const ResumePDF = () => {
 
   // Calculate dynamic content height for responsive sizing
   const calculateContentHeight = useMemo(() => {
+    if (!resumeData || isLoading) {
+      return {
+        height: 1000,
+        pages: 1,
+        isMultiPage: false
+      };
+    }
+    
     let estimatedHeight = 200; // Header base height
     
     if (resumeData.summary) estimatedHeight += 100;
@@ -103,7 +111,7 @@ const ResumePDF = () => {
       pages,
       isMultiPage: pages > 1
     };
-  }, [resumeData]);
+  }, [resumeData, isLoading]);
 
   // Render template based on selected template
   const renderTemplateContent = () => {

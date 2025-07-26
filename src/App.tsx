@@ -53,8 +53,9 @@ const App = () => (
             
             {/* Catch-all route */}
             <Route path="*" element={<NotFound />} />
-          </Routes>
-          <VercelAnalytics />
+           </Routes>
+          {/* Only load Vercel Analytics in production */}
+          {import.meta.env.PROD && <VercelAnalytics />}
         </TooltipProvider>
       </RouteMiddleware>
     </BrowserRouter>

@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from 'react-router-dom';
@@ -27,6 +26,17 @@ const defaultResumeData: ResumeData = {
   projects: []
 };
 
+const defaultResumeSettings: ResumeSettings = {
+  fontFamily: 'Inter',
+  fontSize: 11,
+  primaryColor: '#5d4dcd',
+  secondaryColor: '#333333',
+  accentColor: '#d6bcfa',
+  paperSize: 'letter',
+  margins: 'normal',
+  template: 'modern'
+};
+
 export const useResumeData = (resumeId?: string) => {
   const { toast } = useToast();
   const navigate = useNavigate();
@@ -34,16 +44,7 @@ export const useResumeData = (resumeId?: string) => {
   const [resumeData, setResumeData] = useState<ResumeData>(defaultResumeData);
   const [resumeTitle, setResumeTitle] = useState("");
   const [selectedTemplate, setSelectedTemplate] = useState("modern");
-  const [resumeSettings, setResumeSettings] = useState<ResumeSettings>({
-    fontFamily: 'Inter',
-    fontSize: 11,
-    primaryColor: '#5d4dcd',
-    secondaryColor: '#333333',
-    accentColor: '#d6bcfa',
-    paperSize: 'letter',
-    margins: 'normal',
-    template: 'modern'
-  });
+  const [resumeSettings, setResumeSettings] = useState<ResumeSettings>(defaultResumeSettings);
 
   useEffect(() => {
     const fetchResumeData = async () => {
@@ -100,12 +101,12 @@ export const useResumeData = (resumeId?: string) => {
           console.error('Error parsing resume content:', e);
         }
 
-        let settings: ResumeSettings = { ...resumeSettings };
+        let settings: ResumeSettings = { ...defaultResumeSettings };
         try {
           if (typeof resume.settings === "string") {
-            settings = JSON.parse(resume.settings) as ResumeSettings;
+            settings = { ...defaultResumeSettings, ...JSON.parse(resume.settings) } as ResumeSettings;
           } else if (typeof resume.settings === "object" && resume.settings !== null) {
-            settings = resume.settings as unknown as ResumeSettings;
+            settings = { ...defaultResumeSettings, ...resume.settings } as unknown as ResumeSettings;
           }
         } catch (e) {
           console.error('Error parsing resume settings:', e);
@@ -168,7 +169,9 @@ export const useResumeData = (resumeId?: string) => {
       }
     };
 
-    fetchResumeData();
+    if (resumeId) {
+      fetchResumeData();
+    }
   }, [resumeId, toast, navigate]);
 
   const calculateProgress = (content: ResumeData) => {
