@@ -178,6 +178,7 @@ export type Database = {
           linkedin_data: Json | null
           linkedin_url: string | null
           updated_at: string | null
+          work_experience_description: string | null
         }
         Insert: {
           created_at?: string
@@ -186,6 +187,7 @@ export type Database = {
           linkedin_data?: Json | null
           linkedin_url?: string | null
           updated_at?: string | null
+          work_experience_description?: string | null
         }
         Update: {
           created_at?: string
@@ -194,6 +196,7 @@ export type Database = {
           linkedin_data?: Json | null
           linkedin_url?: string | null
           updated_at?: string | null
+          work_experience_description?: string | null
         }
         Relationships: []
       }

@@ -16,6 +16,7 @@ import { Badge } from "@/components/ui/badge";
 import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { createEnhancedResume, createEnhancedResumeFromExperience } from '@/services/resumeEnhancementService';
+import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { 
   FileText, 
@@ -115,12 +116,64 @@ export default function CreateResumeDialog({
         }
       }
     }
+  }, [open, setWorkExperience]);
+
+  // Load saved work experience when dialog opens
+  useEffect(() => {
+    const loadSavedWorkExperience = async () => {
+      if (open) {
+        try {
+          const { data: { session } } = await supabase.auth.getSession();
+          if (session?.user) {
+            const { data: profile } = await supabase
+              .from('profiles')
+              .select('work_experience_description')
+              .eq('id', session.user.id)
+              .maybeSingle();
+            
+            if (profile?.work_experience_description && !workExperience) {
+              setWorkExperience(profile.work_experience_description);
+            }
+          }
+        } catch (error) {
+          console.error('Error loading saved work experience:', error);
+        }
+      }
+    };
+    
+    loadSavedWorkExperience();
   }, [open]);
+
+  // Save work experience to database when it changes (debounced)
+  useEffect(() => {
+    if (workExperience.trim() && workExperience.length > 10) {
+      const timeoutId = setTimeout(async () => {
+        try {
+          const { data: { session } } = await supabase.auth.getSession();
+          if (session?.user) {
+            await supabase
+              .from('profiles')
+              .upsert({
+                id: session.user.id,
+                work_experience_description: workExperience,
+                updated_at: new Date().toISOString()
+              }, {
+                onConflict: 'id'
+              });
+          }
+        } catch (error) {
+          console.error('Error saving work experience:', error);
+        }
+      }, 2000); // Debounce save for 2 seconds
+      
+      return () => clearTimeout(timeoutId);
+    }
+  }, [workExperience]);
 
   const resetForm = () => {
     setLinkedinUrl('');
     setResumeName('');
-    setWorkExperience('');
+    // Don't clear work experience as it should persist in the database
     setUseWorkExperience(false);
     setError(null);
     setCurrentStep(0);
