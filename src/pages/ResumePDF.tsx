@@ -354,6 +354,24 @@ const ResumePDF = () => {
           )}
         </div>
       )}
+
+      {/* Certifications */}
+      {resumeData.certifications && resumeData.certifications.length > 0 && (
+        <div className="mb-4">
+          <h2 className="text-sm font-semibold text-gray-800 mb-1 border-b border-gray-200 pb-0.5 uppercase tracking-wide"
+              style={getSectionTitleStyles('certifications')}>
+            Certifications
+          </h2>
+          <div className="space-y-1">
+            {resumeData.certifications.map((cert: string, index: number) => (
+              <div key={index} className="flex items-center gap-2">
+                <span className="w-1 h-1 bg-gray-400 rounded-full flex-shrink-0"></span>
+                <span className="text-sm text-gray-700">{cert}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
     </>
   );
 
@@ -400,7 +418,57 @@ const ResumePDF = () => {
         </div>
       )}
       
-      {/* Rest of sections follow similar pattern */}
+      {/* Education Section */}
+      {resumeData.education && resumeData.education.length > 0 && (
+        <div>
+          <h2 className="text-lg font-bold mb-3 text-gray-800">Education</h2>
+          {resumeData.education.map((edu: Education, index) => (
+            <div key={index} className="mb-4">
+              <div className="flex justify-between items-start">
+                <div>
+                  <h3 className="font-semibold text-gray-800">{edu.degree}</h3>
+                  <p className="text-gray-600">{edu.institution}, {edu.location}</p>
+                </div>
+                <span className="text-gray-500 text-sm">{edu.startDate} - {edu.endDate}</span>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* Skills Section */}
+      {(resumeData.skills.technical.length > 0 || resumeData.skills.soft.length > 0) && (
+        <div>
+          <h2 className="text-lg font-bold mb-3 text-gray-800">Skills</h2>
+          {resumeData.skills.technical.length > 0 && (
+            <div className="mb-2">
+              <h3 className="font-semibold text-gray-700">Technical Skills</h3>
+              <p className="text-gray-600">{resumeData.skills.technical.join(', ')}</p>
+            </div>
+          )}
+          {resumeData.skills.soft.length > 0 && (
+            <div>
+              <h3 className="font-semibold text-gray-700">Soft Skills</h3>
+              <p className="text-gray-600">{resumeData.skills.soft.join(', ')}</p>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Certifications Section */}
+      {resumeData.certifications && resumeData.certifications.length > 0 && (
+        <div>
+          <h2 className="text-lg font-bold mb-3 text-gray-800">Certifications</h2>
+          <div className="space-y-2">
+            {resumeData.certifications.map((cert: string, index: number) => (
+              <div key={index} className="flex items-center gap-2">
+                <span className="w-1.5 h-1.5 bg-gray-600 rounded-full flex-shrink-0"></span>
+                <span className="text-gray-700">{cert}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 
@@ -412,8 +480,103 @@ const ResumePDF = () => {
           {resumeData.personal.name}
         </h1>
         <p className="text-center text-lg mt-2">{resumeData.personal.title}</p>
+        <div className="text-center text-sm text-gray-600 mt-2">
+          {[resumeData.personal.email, resumeData.personal.phone, resumeData.personal.location].filter(Boolean).join(' • ')}
+        </div>
       </div>
-      {/* Rest of sections... */}
+
+      {/* Summary */}
+      {resumeData.summary && (
+        <div className="mb-6">
+          <h2 className="text-lg font-bold mb-2 text-gray-800" style={getSectionTitleStyles('summary')}>
+            Summary
+          </h2>
+          <p className="text-gray-700">{resumeData.summary}</p>
+        </div>
+      )}
+
+      {/* Experience */}
+      {resumeData.experience && resumeData.experience.length > 0 && (
+        <div className="mb-6">
+          <h2 className="text-lg font-bold mb-3 text-gray-800" style={getSectionTitleStyles('experience')}>
+            Experience
+          </h2>
+          {resumeData.experience.map((exp: Experience, index) => (
+            <div key={index} className="mb-4">
+              <div className="flex justify-between items-start">
+                <div>
+                  <h3 className="font-semibold text-gray-800">{exp.title}</h3>
+                  <p className="text-gray-600">{exp.company}, {exp.location}</p>
+                </div>
+                <span className="text-gray-500 text-sm">{exp.startDate} - {exp.endDate}</span>
+              </div>
+              <ul className="list-disc pl-6 mt-2 text-gray-700">
+                {formatBulletPoints(exp.description).map((point, i) => (
+                  <li key={i}>{point}</li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* Education */}
+      {resumeData.education && resumeData.education.length > 0 && (
+        <div className="mb-6">
+          <h2 className="text-lg font-bold mb-3 text-gray-800" style={getSectionTitleStyles('education')}>
+            Education
+          </h2>
+          {resumeData.education.map((edu: Education, index) => (
+            <div key={index} className="mb-4">
+              <div className="flex justify-between items-start">
+                <div>
+                  <h3 className="font-semibold text-gray-800">{edu.degree}</h3>
+                  <p className="text-gray-600">{edu.institution}, {edu.location}</p>
+                </div>
+                <span className="text-gray-500 text-sm">{edu.startDate} - {edu.endDate}</span>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* Skills */}
+      {(resumeData.skills.technical.length > 0 || resumeData.skills.soft.length > 0) && (
+        <div className="mb-6">
+          <h2 className="text-lg font-bold mb-3 text-gray-800" style={getSectionTitleStyles('skills')}>
+            Skills
+          </h2>
+          {resumeData.skills.technical.length > 0 && (
+            <div className="mb-2">
+              <h3 className="font-semibold text-gray-700">Technical Skills</h3>
+              <p className="text-gray-600">{resumeData.skills.technical.join(', ')}</p>
+            </div>
+          )}
+          {resumeData.skills.soft.length > 0 && (
+            <div>
+              <h3 className="font-semibold text-gray-700">Soft Skills</h3>
+              <p className="text-gray-600">{resumeData.skills.soft.join(', ')}</p>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Certifications */}
+      {resumeData.certifications && resumeData.certifications.length > 0 && (
+        <div className="mb-6">
+          <h2 className="text-lg font-bold mb-3 text-gray-800" style={getSectionTitleStyles('certifications')}>
+            Certifications
+          </h2>
+          <div className="space-y-2">
+            {resumeData.certifications.map((cert: string, index: number) => (
+              <div key={index} className="flex items-center gap-2">
+                <span className="w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ backgroundColor: getHeaderStyles().color }}></span>
+                <span className="text-gray-700">{cert}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 

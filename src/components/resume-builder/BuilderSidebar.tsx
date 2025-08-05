@@ -26,7 +26,8 @@ import {
   Settings, 
   Wand2,
   Loader,
-  FolderKanban
+  FolderKanban,
+  Award
 } from 'lucide-react';
 
 interface BuilderSidebarProps {
@@ -193,6 +194,26 @@ const BuilderSidebar: React.FC<BuilderSidebarProps> = ({
                     activeSection === "projects" ? "text-[#7c3bed]" : "text-gray-500"
                   )} />
                   <span>Projects</span>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+              
+              <SidebarMenuItem>
+                <SidebarMenuButton 
+                  isActive={activeSection === "certifications"}
+                  onClick={() => onSectionChange("certifications")}
+                  className={cn(
+                    "transition-all duration-200 flex items-center gap-3 px-5 py-2.5 rounded-lg",
+                    activeSection === "certifications" 
+                      ? "text-[#7c3bed] font-medium" 
+                      : "hover:bg-gray-50"
+                  )}
+                  style={activeSection === "certifications" ? { backgroundColor: '#f4f1f8' } : {}}
+                >
+                  <Award className={cn(
+                    "h-4 w-4 transition-colors",
+                    activeSection === "certifications" ? "text-[#7c3bed]" : "text-gray-500"
+                  )} />
+                  <span>Certifications</span>
                 </SidebarMenuButton>
               </SidebarMenuItem>
             </SidebarMenu>

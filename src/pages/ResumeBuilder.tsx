@@ -15,6 +15,7 @@ import ExperienceForm from '@/components/resume-builder/ExperienceForm';
 import EducationForm from '@/components/resume-builder/EducationForm';
 import SkillsForm from '@/components/resume-builder/SkillsForm';
 import SummaryForm from '@/components/resume-builder/SummaryForm';
+import CertificationsForm from '@/components/resume-builder/CertificationsForm';
 import AIAssistant from '@/components/resume-builder/AIAssistant';
 import TemplateSelector from '@/components/resume-builder/TemplateSelector';
 import ResumeSettings from '@/components/resume-builder/ResumeSettings';
@@ -326,6 +327,13 @@ const ResumeBuilder = () => {
           <ProjectForm
             data={resumeData.projects || []}
             onChange={(data) => handleDataChange("projects", data)}
+          />
+        );
+      case "certifications":
+        return (
+          <CertificationsForm
+            data={resumeData.certifications || []}
+            onChange={(data) => handleDataChange("certifications", data)}
           />
         );
       case "templates":

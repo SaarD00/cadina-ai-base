@@ -428,6 +428,26 @@ const ModernTemplate: React.FC<ModernTemplateProps> = ({
           }} />
         </div>
       )}
+
+      {/* Certifications Section */}
+      {safeData.certifications && safeData.certifications.length > 0 && (
+        <div className="mb-6 resume-section">
+          <h2 className="text-sm font-semibold mb-2 border-b border-gray-200 pb-1 uppercase tracking-wide"
+            style={{ color: getSecondaryColor() }}>
+            Certifications
+          </h2>
+          <div className="space-y-2">
+            {safeData.certifications.map((cert: string, index: number) => (
+              <div key={index} className="flex items-center gap-2">
+                <div className="w-1.5 h-1.5 rounded-full flex-shrink-0"
+                  style={{ backgroundColor: getPrimaryColor() }}>
+                </div>
+                <span className="text-sm text-gray-700 font-medium">{cert}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 };

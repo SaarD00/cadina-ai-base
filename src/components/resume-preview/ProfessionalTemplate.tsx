@@ -274,6 +274,24 @@ const ProfessionalTemplate: React.FC<ProfessionalTemplateProps> = ({
         </div>
       )}
 
+      {/* Certifications Section */}
+      {data.certifications && data.certifications.length > 0 && (
+        <div>
+          <h2 className="text-lg font-semibold border-b-2 mb-2" 
+            style={applySectionTitleStyles('certifications')}>
+            Certifications
+          </h2>
+          <div className="space-y-1">
+            {data.certifications.map((cert: string, index: number) => (
+              <div key={index} className="text-sm flex items-center gap-2">
+                <span className="w-1.5 h-1.5 bg-current rounded-full flex-shrink-0"></span>
+                <span>{cert}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
       {/* Languages Section */}
       {data.languages && data.languages.length > 0 && (
         <div>

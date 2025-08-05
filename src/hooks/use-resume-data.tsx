@@ -204,6 +204,16 @@ export const useResumeData = (resumeId?: string) => {
     }
     total += 1;
     
+    if (content.projects && content.projects.length > 0) {
+      progress += 1;
+    }
+    total += 1;
+    
+    if (content.certifications && content.certifications.length > 0) {
+      progress += 1;
+    }
+    total += 1;
+    
     return Math.round((progress / total) * 100);
   };
 

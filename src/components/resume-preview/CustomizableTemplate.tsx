@@ -623,6 +623,23 @@ const CustomizableTemplate: React.FC<CustomizableTemplateProps> = ({
           }} />
         </SegmentWrapper>
       )}
+
+      {/* Certifications Section */}
+      {safeData.certifications && safeData.certifications.length > 0 && (
+        <SegmentWrapper id="certifications">
+          <h2 className="text-lg font-semibold mb-2" style={applySectionTitleStyles('certifications')}>
+            Certifications
+          </h2>
+          <div className="space-y-2">
+            {safeData.certifications.map((cert: string, index: number) => (
+              <div key={index} className="flex items-center gap-2">
+                <span className="w-1.5 h-1.5 bg-resume-purple rounded-full flex-shrink-0"></span>
+                <span className="text-sm text-gray-700">{cert}</span>
+              </div>
+            ))}
+          </div>
+        </SegmentWrapper>
+      )}
     </div>
   );
 };
